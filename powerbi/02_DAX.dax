@@ -1,0 +1,360 @@
+// =====================================================================
+//  CONTROLE DE ESTOQUE — DAX (tabelas calculadas, relacionamentos, medidas)
+//  Crie uma tabela vazia só para as medidas:
+//    Página Inicial > Inserir Dados > nome "_Medidas" > Carregar.
+//  Depois: selecione _Medidas > Nova medida > cole cada medida.
+//  Organize em pastas de exibição (painel Modelo > Pasta de exibição).
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// 1) TABELAS CALCULADAS   (Modelagem > Nova tabela)
+// ---------------------------------------------------------------------
+
+Calendario =
+ADDCOLUMNS (
+    CALENDAR ( MIN ( Historico[DataRef] ), MAX ( Historico[DataRef] ) ),
+    "Ano", YEAR ( [Date] ),
+    "MesNum", MONTH ( [Date] ),
+    "Mês", FORMAT ( [Date], "mmm/yy" ),
+    "AnoMes", YEAR ( [Date] ) * 100 + MONTH ( [Date] ),
+    "Dia da Semana", FORMAT ( [Date], "ddd" ),
+    "Semana", WEEKNUM ( [Date], 2 )
+)
+// Depois: marcar como tabela de datas (coluna Date) e classificar "Mês" por "AnoMes".
+
+dStatus =
+DATATABLE (
+    "Status", STRING, "Ordem", INTEGER, "Cor", STRING, "Faixa", STRING,
+    {
+        { "Crítico",     1, "#D64545", "Abaixo do limite crítico" },
+        { "Atenção",     2, "#E0A100", "Próximo do limite" },
+        { "Seguro",      3, "#2E9E5B", "Acima da faixa de atenção" },
+        { "Sem consumo", 4, "#8A94A6", "Sem média de consumo" },
+        { "Sem dados",   5, "#C3C9D4", "Planilha sem estoque (#N/A)" }
+    }
+)
+// Classificar dStatus[Status] por dStatus[Ordem].
+
+dStatusOS =
+DATATABLE (
+    "StatusOS", STRING, "Ordem", INTEGER, "Cor", STRING,
+    {
+        { "Prazo vencido",          1, "#D64545" },
+        { "Próximo do vencimento",  2, "#E0A100" },
+        { "Dentro do prazo",        3, "#2E9E5B" },
+        { "Sem prazo",              4, "#8A94A6" },
+        { "Concluída",              5, "#1F3A5F" },
+        { "Sem OS",                 6, "#C3C9D4" }
+    }
+)
+// Classificar dStatusOS[StatusOS] por dStatusOS[Ordem].
+
+
+// ---------------------------------------------------------------------
+// 2) RELACIONAMENTOS  (exibição de Modelo — arraste campo sobre campo)
+//    Estoque[Codigo]        1 ──> *  Historico[Codigo]     (filtro único: Estoque filtra Historico)
+//    Calendario[Date]       1 ──> *  Historico[DataRef]
+//    dStatus[Status]        1 ──> *  Estoque[StatusEstoque]
+//    dStatusOS[StatusOS]    1 ──> *  Estoque[StatusOS]
+//    Parametros e _Medidas: sem relacionamento.
+//    Estoque[StatusEstoque]: classificar por Estoque[OrdemStatus].
+// ---------------------------------------------------------------------
+
+
+// ---------------------------------------------------------------------
+// 3) MEDIDAS — pasta "01 Parâmetros"
+// ---------------------------------------------------------------------
+
+Limite Crítico = MAX ( Parametros[LimiteCritico] )
+
+Limite Atenção = MAX ( Parametros[LimiteCritico] ) + MAX ( Parametros[MargemAtencao] )
+
+Texto Regras =
+"🔴 Crítico: abaixo de " & [Limite Crítico] & " dias   •   🟡 Atenção: de "
+    & [Limite Crítico] & " a " & ( [Limite Atenção] - 1 ) & " dias   •   🟢 Seguro: "
+    & [Limite Atenção] & " dias ou mais"
+
+Data Base = MAX ( Estoque[DataRef] )
+
+Texto Atualização =
+"Posição de " & FORMAT ( [Data Base], "dd/mm/yyyy" )
+
+
+// ---------------------------------------------------------------------
+// MEDIDAS — pasta "02 Estoque"
+// (a planilha registra estoque em caixas/pacotes: "cx")
+// ---------------------------------------------------------------------
+
+Total Itens = COUNTROWS ( Estoque )
+
+Estoque (cx) = SUM ( Estoque[Estoque] )
+
+Empenhado (cx) = SUM ( Estoque[Empenhado] )
+
+Disponível (cx) = SUM ( Estoque[Disponivel] )
+
+Estoque (un) = SUM ( Estoque[EstoqueUnidades] )
+
+Disponível (un) = SUM ( Estoque[DisponivelUnidades] )
+
+% Comprometido = DIVIDE ( [Empenhado (cx)], [Estoque (cx)] )
+
+Consumo Diário (cx) = SUM ( Estoque[ConsumoDiario] )
+
+// Cobertura agregada: quantos dias o disponível do grupo atende o consumo do grupo
+Cobertura (dias) =
+VAR _disp = CALCULATE ( SUM ( Estoque[Disponivel] ), NOT ISBLANK ( Estoque[ConsumoDiario] ) )
+RETURN DIVIDE ( _disp, [Consumo Diário (cx)] )
+
+// Mediana dos dias por item (não é distorcida por itens com milhares de dias)
+Dias Médios de Estoque =
+MEDIANX ( FILTER ( Estoque, NOT ISBLANK ( Estoque[DiasEstoque] ) ), Estoque[DiasEstoque] )
+
+Reposição Sugerida (cx) = SUM ( Estoque[ReposicaoSugerida] )
+
+
+// ---------------------------------------------------------------------
+// MEDIDAS — pasta "03 Alertas"
+// ---------------------------------------------------------------------
+
+Itens Críticos =
+CALCULATE ( COUNTROWS ( Estoque ), Estoque[StatusEstoque] = "Crítico" ) + 0
+
+Itens Atenção =
+CALCULATE ( COUNTROWS ( Estoque ), Estoque[StatusEstoque] = "Atenção" ) + 0
+
+Itens Seguros =
+CALCULATE ( COUNTROWS ( Estoque ), Estoque[StatusEstoque] = "Seguro" ) + 0
+
+Itens Sem Consumo =
+CALCULATE ( COUNTROWS ( Estoque ), Estoque[StatusEstoque] IN { "Sem consumo", "Sem dados" } ) + 0
+
+Itens em Alerta = [Itens Críticos] + [Itens Atenção]
+
+% Itens em Alerta = DIVIDE ( [Itens em Alerta], [Total Itens] )
+
+Itens com Ruptura =
+CALCULATE ( COUNTROWS ( Estoque ), Estoque[Disponivel] < 0 ) + 0
+
+Novos Alertas =
+CALCULATE ( COUNTROWS ( Estoque ), Estoque[NovoAlerta] = TRUE () ) + 0
+
+Itens Sem Movimentação =
+CALCULATE ( COUNTROWS ( Estoque ), Estoque[SemMovimentacao] = TRUE () ) + 0
+
+Críticos sem OS =
+CALCULATE ( COUNTROWS ( Estoque ), Estoque[StatusEstoque] = "Crítico", ISBLANK ( Estoque[OS] ) ) + 0
+
+Texto Alerta Card =
+IF (
+    [Itens Críticos] = 0,
+    "Nenhum item crítico",
+    [Itens Críticos] & " itens críticos • " & [Críticos sem OS] & " sem OS aberta"
+)
+
+
+// ---------------------------------------------------------------------
+// MEDIDAS — pasta "04 Franquias"
+// ---------------------------------------------------------------------
+
+Qtd Franquias = DISTINCTCOUNT ( Estoque[Franquia] )
+
+// Índice para ranquear necessidade de reposição (críticos pesam 2, atenção 1)
+Índice de Necessidade = [Itens Críticos] * 2 + [Itens Atenção]
+
+Ranking Necessidade =
+IF (
+    HASONEVALUE ( Estoque[Franquia] ),
+    RANKX ( ALLSELECTED ( Estoque[Franquia] ), [Índice de Necessidade],, DESC, DENSE )
+)
+
+
+// ---------------------------------------------------------------------
+// MEDIDAS — pasta "05 OS"
+// ---------------------------------------------------------------------
+
+OS Abertas =
+CALCULATE ( DISTINCTCOUNT ( Estoque[OS] ), Estoque[OSAberta] = TRUE () ) + 0
+
+OS Vencidas =
+CALCULATE ( DISTINCTCOUNT ( Estoque[OS] ), Estoque[StatusOS] = "Prazo vencido" ) + 0
+
+OS Próximas do Vencimento =
+CALCULATE ( DISTINCTCOUNT ( Estoque[OS] ), Estoque[StatusOS] = "Próximo do vencimento" ) + 0
+
+OS Sem Prazo =
+CALCULATE ( DISTINCTCOUNT ( Estoque[OS] ), Estoque[StatusOS] = "Sem prazo" ) + 0
+
+Produtos com OS Aberta =
+CALCULATE ( COUNTROWS ( Estoque ), Estoque[OSAberta] = TRUE () ) + 0
+
+
+// ---------------------------------------------------------------------
+// MEDIDAS — pasta "06 Histórico"   (use com Calendario[Date] no eixo)
+// ---------------------------------------------------------------------
+
+Estoque Hist (cx) = SUM ( Historico[Estoque] )
+
+Disponível Hist (cx) = SUM ( Historico[Disponivel] )
+
+Entradas (cx) = SUM ( Historico[Entradas] )
+
+Saídas (cx) = SUM ( Historico[Saidas] )
+
+Saldo Movimentação (cx) = [Entradas (cx)] - [Saídas (cx)]
+
+Estoque Anterior (cx) = SUM ( Historico[EstoqueAnterior] )
+
+Cobertura Hist (dias) =
+VAR _disp = CALCULATE ( SUM ( Historico[Disponivel] ), NOT ISBLANK ( Historico[ConsumoDiario] ) )
+RETURN DIVIDE ( _disp, SUM ( Historico[ConsumoDiario] ) )
+
+Dias de Estoque (produto) =
+// Para gráfico de linha de UM produto selecionado
+IF ( HASONEVALUE ( Historico[Codigo] ), AVERAGE ( Historico[DiasEstoque] ) )
+
+Críticos Hist =
+CALCULATE ( COUNTROWS ( Historico ), Historico[StatusEstoque] = "Crítico" ) + 0
+
+Atenção Hist =
+CALCULATE ( COUNTROWS ( Historico ), Historico[StatusEstoque] = "Atenção" ) + 0
+
+Qtd Snapshots = DISTINCTCOUNT ( Historico[DataRef] )
+
+Estoque Primeiro Dia (cx) =
+VAR _d = MIN ( Historico[DataRef] )
+RETURN CALCULATE ( SUM ( Historico[Estoque] ), Historico[DataRef] = _d )
+
+Estoque Último Dia (cx) =
+VAR _d = MAX ( Historico[DataRef] )
+RETURN CALCULATE ( SUM ( Historico[Estoque] ), Historico[DataRef] = _d )
+
+Variação no Período (cx) = [Estoque Último Dia (cx)] - [Estoque Primeiro Dia (cx)]
+
+
+// ---------------------------------------------------------------------
+// MEDIDAS — pasta "07 Formatação"  (formatação condicional > Valor do campo)
+// ---------------------------------------------------------------------
+
+Cor Status =
+SWITCH (
+    SELECTEDVALUE ( Estoque[StatusEstoque] ),
+    "Crítico", "#D64545",
+    "Atenção", "#E0A100",
+    "Seguro", "#2E9E5B",
+    "#8A94A6"
+)
+
+Fundo Status =
+SWITCH (
+    SELECTEDVALUE ( Estoque[StatusEstoque] ),
+    "Crítico", "#FBE3E3",
+    "Atenção", "#FFF3CC",
+    "Seguro", "#E3F4EA",
+    BLANK ()
+)
+
+Cor Prazo =
+SWITCH (
+    SELECTEDVALUE ( Estoque[StatusOS] ),
+    "Prazo vencido", "#D64545",
+    "Próximo do vencimento", "#E0A100",
+    "Dentro do prazo", "#2E9E5B",
+    "Concluída", "#1F3A5F",
+    "#8A94A6"
+)
+
+Fundo Prazo =
+SWITCH (
+    SELECTEDVALUE ( Estoque[StatusOS] ),
+    "Prazo vencido", "#FBE3E3",
+    "Próximo do vencimento", "#FFF3CC",
+    "Dentro do prazo", "#E3F4EA",
+    BLANK ()
+)
+
+Ícone Status =
+SWITCH (
+    SELECTEDVALUE ( Estoque[StatusEstoque] ),
+    "Crítico", "🔴",
+    "Atenção", "🟡",
+    "Seguro", "🟢",
+    "⚪"
+)
+
+Cor Card Críticos = IF ( [Itens Críticos] > 0, "#D64545", "#2E9E5B" )
+
+Cor Card Atenção  = IF ( [Itens Atenção] > 0, "#E0A100", "#2E9E5B" )
+
+Cor Card OS Vencidas = IF ( [OS Vencidas] > 0, "#D64545", "#2E9E5B" )
+
+// Barra de dados "dias até o limite" (útil na tabela de alertas)
+Dias Faltando p/ Limite =
+VAR _d = SELECTEDVALUE ( Estoque[DiasEstoque] )
+RETURN IF ( NOT ISBLANK ( _d ), [Limite Crítico] - _d )
+
+
+// ---------------------------------------------------------------------
+// MEDIDAS — pasta "08 Detalhe do produto" (página de pesquisa/cartão)
+// ---------------------------------------------------------------------
+
+Produto Selecionado =
+IF (
+    HASONEVALUE ( Estoque[Codigo] ),
+    SELECTEDVALUE ( Estoque[Codigo] ) & " — " & SELECTEDVALUE ( Estoque[Descricao] ),
+    "Selecione um produto na pesquisa"
+)
+
+Resumo Produto =
+IF (
+    HASONEVALUE ( Estoque[Codigo] ),
+    "Franquia: " & SELECTEDVALUE ( Estoque[Franquia] )
+        & UNICHAR ( 10 ) & "Disponível: " & FORMAT ( [Disponível (cx)], "#,##0" ) & " cx"
+        & UNICHAR ( 10 ) & "Dias de estoque: " & FORMAT ( SELECTEDVALUE ( Estoque[DiasEstoque] ), "#,##0" )
+        & UNICHAR ( 10 ) & "OS: " & COALESCE ( SELECTEDVALUE ( Estoque[OS] ), "—" )
+        & UNICHAR ( 10 ) & "Última movimentação: " & COALESCE ( SELECTEDVALUE ( Estoque[UltimaMovimentacao] ), "—" )
+        & UNICHAR ( 10 ) & "Prazo: "
+        & IF ( ISBLANK ( SELECTEDVALUE ( Estoque[Prazo] ) ), "—", FORMAT ( SELECTEDVALUE ( Estoque[Prazo] ), "dd/mm/yyyy" ) )
+)
+
+
+// =====================================================================
+// 4) CONSULTA DAX PARA O POWER AUTOMATE
+//    Ação: Power BI > "Executar uma consulta em um conjunto de dados"
+//    (Run a query against a dataset). Cole exatamente como abaixo.
+// =====================================================================
+
+// 4a) TODOS os itens em alerta (resumo diário)
+EVALUATE
+SELECTCOLUMNS (
+    FILTER ( Estoque, Estoque[StatusEstoque] IN { "Crítico", "Atenção" } ),
+    "Status", Estoque[StatusEstoque],
+    "Novo", IF ( Estoque[NovoAlerta], "NOVO", "" ),
+    "Codigo", Estoque[Codigo],
+    "Produto", Estoque[Descricao],
+    "Franquia", Estoque[Franquia],
+    "Estoque", Estoque[Estoque],
+    "Disponivel", Estoque[Disponivel],
+    "Dias", Estoque[DiasEstoque],
+    "OS", COALESCE ( Estoque[OS], "—" ),
+    "Movimentacao", COALESCE ( Estoque[UltimaMovimentacao], "—" ),
+    "Prazo", IF ( ISBLANK ( Estoque[Prazo] ), "—", FORMAT ( Estoque[Prazo], "dd/mm/yyyy" ) )
+)
+ORDER BY [Dias] ASC
+
+// 4b) SOMENTE itens que ENTRARAM em alerta desde o arquivo anterior
+EVALUATE
+SELECTCOLUMNS (
+    FILTER ( Estoque, Estoque[NovoAlerta] = TRUE () ),
+    "Status", Estoque[StatusEstoque],
+    "Codigo", Estoque[Codigo],
+    "Produto", Estoque[Descricao],
+    "Franquia", Estoque[Franquia],
+    "Disponivel", Estoque[Disponivel],
+    "Dias", Estoque[DiasEstoque],
+    "OS", COALESCE ( Estoque[OS], "—" ),
+    "Movimentacao", COALESCE ( Estoque[UltimaMovimentacao], "—" ),
+    "Prazo", IF ( ISBLANK ( Estoque[Prazo] ), "—", FORMAT ( Estoque[Prazo], "dd/mm/yyyy" ) )
+)
+ORDER BY [Dias] ASC
