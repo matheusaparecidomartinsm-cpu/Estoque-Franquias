@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Estoque Franquias</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -520,7 +525,7 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
           <div class="field"><label for="uaUser">Usuário</label><input id="uaUser" type="text" autocapitalize="none" spellcheck="false" placeholder="ex.: joao"></div>
           <div class="field"><label for="uaName">Nome</label><input id="uaName" type="text" placeholder="ex.: João Silva"></div>
           <div class="field"><label for="uaPass">Senha inicial</label><input id="uaPass" type="text" placeholder="mínimo 6 caracteres"></div>
-          <div class="field"><label for="uaRole">Perfil</label><select id="uaRole"><option value="editor">Editor: edita O.S., prazos e dados</option><option value="leitor">Leitor: só consulta</option></select></div>
+          <div class="field"><label for="uaRole">Perfil</label><select id="uaRole"><option value="editor">Editor: edita O.S., prazos e dados</option><option value="admin" id="uaRoleAdmin" hidden>Administrador: edita e gerencia usuários</option><option value="leitor">Leitor: só consulta</option></select></div>
           <div class="field" style="justify-content:end"><button class="btn primary" type="submit">Criar usuário</button></div>
         </form>
         <p class="note" id="uaMsg" style="margin:10px 0 0"></p>
@@ -1678,6 +1683,7 @@ ORDER BY [Dias] ASC
 <div class="toast" id="toast" hidden></div>
 <div class="tip" id="tip" hidden></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.min.js"></script>
 <script>
 const FR = [["THE BEST", "The Best Açaí"], ["SODIE", "Sodiê Doces"], ["CACHORRAO", "Cachorrão do Claudião"], ["TT BURGER", "TT Burger"], ["TT BURGUER", "TT Burger"], ["BATEL GRILL", "Batel Grill"], ["OGGI", "Oggi Sorvetes"], ["NANICA", "Nanica"], ["SEVERO GARAGE", "Severo Garage"], ["SEVERO BURGER", "Severo Burger"], ["DOG KING", "Dog King"], ["GREENJOY", "Greenjoy"], ["ESPETTO", "Espetto Carioca"], ["COCO BAMBU", "Coco Bambu"], ["JAH", "Jah Açaí"], ["MANE", "Mané"], ["BUTECO", "Buteco Seu Rufino"], ["MUNDO ANIMAL", "Mundo Animal"], ["HORA DO PASTEL", "Hora do Pastel"], ["PANTANAL", "Pantanal"], ["AGUA DOCE", "Água Doce"], ["PROFOOD", "Profood"], ["CAMARADA CAMARAO", "Camarada Camarão"], ["AMUUR", "Amuur Milkshake"], ["MR BLACK", "Mr Black Café"], ["BATATA INGLESA", "Batata Inglesa"], ["IPT", "IPT"]];
 const CAT = [["TAMPA POTE", "Tampa"], ["TAMPA COPO", "Tampa"], ["PORTA COPO", "Porta-copos"], ["TO GO", "To Go"], ["MARMITEX", "Marmitex"], ["GRATINADEIRA", "Gratinadeira"], ["SELADA", "Seladas"], ["CINTA", "Cinta"], ["DIVISORIA", "Divisória"], ["GUARDANAPO", "Guardanapo"], ["ADESIVO", "Adesivo / Lacre"], ["LACRE", "Adesivo / Lacre"], ["SACOLA", "Sacola"], ["SACO", "Saco"], ["POTE", "Pote"], ["COPO", "Copo"], ["TAMPA", "Tampa"], ["PAPEL", "Papel"], ["ACOPLADO", "Papel"], ["TOALHA", "Papel"], ["BANDEJA", "Bandeja"], ["BOLO", "Confeitaria"], ["TORTA", "Confeitaria"], ["DOCINHO", "Confeitaria"], ["PRATO", "Confeitaria"], ["FORMA", "Confeitaria"], ["PUDIM", "Confeitaria"], ["COCADA", "Confeitaria"], ["PIZZA", "Caixa / Box"], ["CASQUINHA", "Caixa / Box"], ["BATATA", "Caixa / Box"], ["CAIXA", "Caixa / Box"], ["BOX", "Caixa / Box"], ["PORCO", "Caixa / Box"], ["PORCAO", "Caixa / Box"], ["CARTUCHO", "Caixa / Box"], ["LANCHE", "Caixa / Box"], ["HAMBURGUER", "Caixa / Box"], ["RESPIRO", "Caixa / Box"], ["ACOMPANHAMENTO", "Caixa / Box"], ["DELIVERY", "Caixa / Box"]];
@@ -2284,7 +2290,10 @@ $('#paramForm').onsubmit = async e => {
 /* ---------- exportar e copiar ---------- */
 function csv(rows){ return '﻿' + rows.map(r => r.map(v => { const s = v == null ? '' : String(v); return /[;"\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(';')).join('\r\n'); }
 async function save(name, data){
-  if (!DL){ toast('Download indisponível nesta visualização'); return; }
+  if (!DL){
+    if (!window.claude){ const blob = data instanceof Blob ? data : new Blob([data], {type:'text/csv;charset=utf-8'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000); return; }
+    toast('Download indisponível nesta visualização'); return;
+  }
   try { await DL.save({filename:name, data}); } catch (e){ if (!e || e.code !== 'declined') toast('Não foi possível gerar o arquivo'); }
 }
 $('#expEstoque').onclick = () => { const rows = filtered().filter(i => !F.st.size || F.st.has(i.st));
@@ -2366,13 +2375,14 @@ function enterApp(u){
   lgMsg(''); $('#lgPass').value = '';
   render();
 }
-function logout(){ setSess(null); showLogin(USERS.length ? 'login' : (canAdmin ? 'setup' : 'closed')); }
+function logout(){ if (SB){ SB.auth.signOut().finally(() => location.reload()); return; } setSess(null); showLogin(USERS.length ? 'login' : (canAdmin ? 'setup' : 'closed')); }
 $('#btnLogout').onclick = logout;
 $('#lgEye').onclick = () => { const p = $('#lgPass'), show = p.type === 'password'; p.type = show ? 'text' : 'password'; $('#lgEye').textContent = show ? 'Ocultar' : 'Mostrar'; $('#lgEye').setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha'); };
 ['lgPass'].forEach(id => $('#' + id).addEventListener('keyup', e => { $('#lgCaps').hidden = !(e.getModifierState && e.getModifierState('CapsLock')); }));
 function shake(){ const c = $('.lg-card'); c.classList.remove('lg-shake'); void c.offsetWidth; c.classList.add('lg-shake'); }
 $('#lgForm').onsubmit = async e => {
   e.preventDefault();
+  if (SB){ return supaLogin(); }
   if (!['login','setup'].includes(MODE)) return;
   const u = normU($('#lgUser').value), pw = $('#lgPass').value, btn = $('#lgBtn');
   if (!u || !pw){ lgMsg('Preencha usuário e senha.'); shake(); return; }
@@ -2416,12 +2426,13 @@ function authInit(){
 let resetOpen = null, delArm = null;
 function renderUsers(){
   const box = $('#usersBlock'); if (!box) return;
-  const can = !!DB && canAdmin && !isReader();
+  const can = SB ? !!(ME && ME.role === 'admin') : (!!DB && canAdmin && !isReader());
+  if ($('#uaRoleAdmin')) $('#uaRoleAdmin').hidden = !SB;
   $('#userAddBox').hidden = !can;
   $('#usersHint').textContent = can ? 'Quem pode entrar com usuário e senha. Só editores do painel criam, removem e trocam senhas.' : 'Só editores do painel podem cadastrar usuários.';
   $('#usersList').innerHTML = USERS.length ? USERS.slice().sort((a, b) => (a.name || a.id).localeCompare(b.name || b.id, 'pt-BR')).map(x => `<li class="urow" data-u="${esc(x.id)}" style="cursor:default">
       <span class="avatar">${esc((x.name || x.id).slice(0, 1))}</span>
-      <span>${esc(x.name || x.id)}${x.role === 'leitor' ? ' <span class="tag">leitor</span>' : ' <span class="tag done">editor</span>'}${ME && x.id === ME.id ? ' <span class="tag">você</span>' : ''}<span class="role">${esc(x.id)}${x.createdAt ? ' · desde ' + brDate(x.createdAt.slice(0, 10)) : ''}</span></span>
+      <span>${esc(x.name || x.id)}${x.role === 'leitor' ? ' <span class="tag">leitor</span>' : x.role === 'admin' ? ' <span class="tag done">administrador</span>' : ' <span class="tag done">editor</span>'}${ME && x.id === ME.id ? ' <span class="tag">você</span>' : ''}<span class="role">${esc(x.id)}${x.createdAt ? ' · desde ' + brDate(x.createdAt.slice(0, 10)) : ''}</span></span>
       <span class="acts">${can ? `<button type="button" class="btn sm" data-act="reset">Trocar senha</button>${ME && x.id === ME.id ? '' : `<button type="button" class="btn sm" data-act="del" style="color:var(--crit)">${delArm === x.id ? 'Confirmar remoção' : 'Remover'}</button>`}` : ''}</span>
       ${resetOpen === x.id ? `<span class="reset"><input id="rp-${esc(x.id)}" type="text" placeholder="Nova senha (mínimo 6 caracteres)" autocomplete="off"><button type="button" class="btn sm primary" data-act="save">Salvar senha</button><button type="button" class="btn sm" data-act="cancel">Cancelar</button></span>` : ''}
     </li>`).join('') : '<li class="urow" style="cursor:default"><span></span><span class="muted">Nenhum usuário cadastrado.</span><span></span></li>';
@@ -2432,6 +2443,7 @@ function renderUsers(){
     if (act === 'save'){
       const pw = document.getElementById('rp-' + id).value;
       if (pw.length < 6){ toast('A senha precisa ter pelo menos 6 caracteres'); return; }
+      if (SB){ try { await supaFn({action:'password', username:id, password:pw}); resetOpen = null; renderUsers(); toast('Senha trocada'); } catch (e){ toast(e.message); } return; }
       const cur = USERS.find(x => x.id === id), nu = await makeUser(id, cur.name, pw, cur.role);
       try { const {id:_x, ...rest} = cur; await DB.doc('users/' + id).set({...rest, ...nu, createdAt:cur.createdAt || nu.createdAt}); resetOpen = null;
         if (ME && id === ME.id){ ME = {...ME, ...nu}; if (getSess()) setSess({u:id, h:nu.hash}); }
@@ -2440,7 +2452,7 @@ function renderUsers(){
     }
     if (act === 'del'){
       if (delArm !== id){ delArm = id; renderUsers(); setTimeout(() => { if (delArm === id){ delArm = null; renderUsers(); } }, 4000); return; }
-      try { await DB.doc('users/' + id).delete(); delArm = null; toast('Usuário removido'); } catch { toast('Não foi possível remover'); }
+      try { if (SB){ await supaFn({action:'delete', username:id}); await supaUsers(); } else await DB.doc('users/' + id).delete(); delArm = null; renderUsers(); toast('Usuário removido'); } catch (e){ toast(SB ? e.message : 'Não foi possível remover'); }
     }
   });
 }
@@ -2450,9 +2462,98 @@ $('#userAdd').onsubmit = async e => {
   if (!u){ msg.textContent = 'Informe o usuário (letras, números, ponto, hífen ou sublinhado).'; return; }
   if (pw.length < 6){ msg.textContent = 'A senha inicial precisa ter pelo menos 6 caracteres.'; return; }
   if (USERS.some(x => x.id === u)){ msg.textContent = `O usuário “${u}” já existe.`; return; }
+  if (SB){ try { await supaFn({action:'create', username:u, name, password:pw, role:$('#uaRole').value}); await supaUsers(); msg.textContent = `Usuário “${u}” criado. Passe a senha para a pessoa.`; $('#uaUser').value = ''; $('#uaName').value = ''; $('#uaPass').value = ''; } catch (e){ msg.textContent = e.message; } return; }
   try { await DB.doc('users/' + u).set(await makeUser(u, name, pw, $('#uaRole').value)); msg.textContent = `Usuário “${u}” criado. Passe a senha para a pessoa.`; $('#uaUser').value = ''; $('#uaName').value = ''; $('#uaPass').value = ''; }
   catch (err){ msg.textContent = err && err.code === 'invalid_argument' ? 'Só editores do painel podem criar usuários.' : 'Não foi possível criar o usuário.'; }
 };
+
+/* ---------- banco Supabase (versão web) ---------- */
+const SUPA = {"url": "https://mnvyitxutjvsoqgfftxn.supabase.co", "key": "sb_publishable_Oxodo29Euz7H_cCA1fRNCQ_Iobo-dqp"};
+let SB = null;
+function sbErr(e){ const x = new Error((e && e.message) || 'erro'); if (e && (e.code === '42501' || /row-level security|permission denied/i.test(e.message || ''))) x.code = 'invalid_argument'; return x; }
+function sbAdapter(sb){
+  const subs = {};
+  const deb = f => { let h; return () => { clearTimeout(h); h = setTimeout(f, 200); }; };
+  const bump = t => (subs[t] || []).forEach(f => f());
+  const ch = sb.channel('painel-estoque');
+  ['snapshots','controle','config','profiles'].forEach(t => ch.on('postgres_changes', {event:'*', schema:'public', table:t}, () => bump(t)));
+  ch.subscribe();
+  const watch = (t, load) => { (subs[t] = subs[t] || []).push(deb(load)); load(); return () => {}; };
+  return {
+    bump,
+    collection: t => ({ onSnapshot: (cb, err) => watch(t, async () => {
+      const {data, error} = await sb.from(t).select('id,doc');
+      if (error){ if (err) err(error); return; }
+      cb({docs: data.map(r => ({id:r.id, data:() => r.doc}))});
+    }) }),
+    doc: p => { const [t, id] = p.split('/'); return {
+      async set(v){ const {error} = await sb.from(t).upsert({id, doc:v}); if (error) throw sbErr(error); bump(t); },
+      async delete(){ const {error} = await sb.from(t).delete().eq('id', id); if (error) throw sbErr(error); bump(t); },
+      onSnapshot: (cb, err) => watch(t, async () => {
+        const {data, error} = await sb.from(t).select('doc').eq('id', id).maybeSingle();
+        if (error){ if (err) err(error); return; }
+        cb({exists:!!data, data:() => data && data.doc});
+      })
+    }; }
+  };
+}
+async function supaFn(body){
+  const {data, error} = await SB.functions.invoke('usuarios', {body});
+  if (error){ let m = 'Não foi possível concluir.'; try { const j = await error.context.json(); if (j && j.error) m = j.error; } catch {} throw new Error(m); }
+  if (data && data.error) throw new Error(data.error);
+  return data;
+}
+async function supaUsers(){
+  const {data} = await SB.from('profiles').select('username,name,role,created_at,id');
+  USERS = (data || []).map(p => ({id:p.username, u:p.username, name:p.name, role:p.role, createdAt:p.created_at, uid:p.id}));
+  if (ME && !USERS.some(x => x.uid === ME.uid)){ SB.auth.signOut().finally(() => location.reload()); return; }
+  if (ME){ const cur = USERS.find(x => x.uid === ME.uid); if (cur && cur.role !== ME.role) location.reload(); }
+  if (TAB === 'config') renderUsers();
+}
+let dataStarted = false;
+async function supaEnter(user){
+  const {data:prof, error} = await SB.from('profiles').select('username,name,role,created_at,id').eq('id', user.id).maybeSingle();
+  if (error || !prof){ await SB.auth.signOut(); showLogin('login'); lgMsg('Este usuário não tem acesso ao painel.'); return false; }
+  canAdmin = prof.role !== 'leitor'; canWrite = prof.role !== 'leitor';
+  if (!dataStarted){
+    dataStarted = true; DB = sbAdapter(SB); startData(DB);
+    SB.channel('painel-perfis').on('postgres_changes', {event:'*', schema:'public', table:'profiles'}, () => supaUsers()).subscribe();
+  }
+  setSync(true, prof.role === 'leitor' ? 'compartilhado · somente leitura' : 'compartilhado com a equipe');
+  enterApp({id:prof.username, u:prof.username, name:prof.name, role:prof.role, uid:prof.id, createdAt:prof.created_at});
+  supaUsers();
+  return true;
+}
+async function supaLogin(){
+  const u = normU($('#lgUser').value), pw = $('#lgPass').value, btn = $('#lgBtn');
+  if (!u || !pw){ lgMsg('Preencha usuário e senha.'); shake(); return; }
+  btn.disabled = true; btn.innerHTML = '<span class="lg-spin"></span>';
+  try {
+    const {data, error} = await SB.auth.signInWithPassword({email:u + '@profood.local', password:pw});
+    if (error){ throw new Error(/network|fetch/i.test(error.message || '') ? 'Sem conexão com o servidor. Verifique a internet.' : 'Usuário ou senha incorretos.'); }
+    await supaEnter(data.user);
+  } catch (err){ lgMsg(err.message); shake(); }
+  finally { btn.disabled = false; btn.textContent = 'Entrar'; }
+}
+async function supaInit(){
+  $('#lgKeep').closest('.lg-check').hidden = true;
+  if (!window.supabase){ showLogin('nodb'); lgMsg('Não foi possível carregar o acesso ao banco de dados. Verifique a internet e recarregue a página.'); return; }
+  let store; try { sessionStorage.setItem('_t', '1'); sessionStorage.removeItem('_t'); store = sessionStorage; } catch { const m = {}; store = {getItem:k => m[k] ?? null, setItem:(k, v) => { m[k] = v; }, removeItem:k => { delete m[k]; }}; }
+  SB = window.supabase.createClient(SUPA.url, SUPA.key, {auth:{persistSession:true, storage:store, storageKey:'ef-auth', autoRefreshToken:true}});
+  showLogin('wait');
+  const {data:{session}} = await SB.auth.getSession();
+  if (session && await supaEnter(session.user)) return;
+  if (!ME) showLogin('login');
+}
+function startData(db){
+  let ready = {s:false, c:false};
+  db.collection('snapshots').onSnapshot(s => {
+    snaps = s.docs.map(d => ({date:d.id, rows:(d.data().rows || [])})).sort((a, b) => a.date < b.date ? -1 : 1);
+    if (!ready.s) ENTER = true; ready.s = true; compute(); bgRender();
+  }, () => setSync(false, 'conexão perdida — recarregue a página'));
+  db.collection('controle').onSnapshot(s => { ctl = {}; s.docs.forEach(d => ctl[d.id] = d.data()); ready.c = true; compute(); bgRender(); }, () => {});
+  db.doc('config/params').onSnapshot(d => { P = {...PDEF, ...(d.exists ? d.data() : {})}; compute(); bgRender(); }, () => {});
+}
 
 /* ---------- dados compartilhados ---------- */
 (async () => {
@@ -2460,20 +2561,17 @@ $('#userAdd').onsubmit = async e => {
   go(TABS.includes(tab) ? tab : 'resumo');
   const use = window.claude && window.claude.use ? n => window.claude.use(n) : () => Promise.resolve(null);
   use('downloads').then(d => DL = d);
+  if (!window.claude && SUPA){ supaInit(); return; }
   const [db, user] = await Promise.all([use('db'), use('user')]);
   if (!db){ setSync(false, 'sem conexão com os dados da equipe'); render(); authInit(); return; }
   DB = db;
   if (user){ canAdmin = await user.canEdit(); canWrite = await user.can('data.write'); }
   $('#btnImport').hidden = !canAdmin;
   setSync(true, canAdmin ? 'compartilhado · você edita tudo' : canWrite === false ? 'compartilhado · somente leitura' : 'compartilhado com a equipe');
-  let ready = {s:false, c:false};
   authInit();
-  db.collection('snapshots').onSnapshot(s => {
-    snaps = s.docs.map(d => ({date:d.id, rows:(d.data().rows || [])})).sort((a, b) => a.date < b.date ? -1 : 1);
-    if (!ready.s) ENTER = true; ready.s = true; compute(); bgRender();
-  }, () => setSync(false, 'conexão perdida — recarregue a página'));
-  db.collection('controle').onSnapshot(s => { ctl = {}; s.docs.forEach(d => ctl[d.id] = d.data()); ready.c = true; compute(); bgRender(); }, () => {});
-  db.doc('config/params').onSnapshot(d => { P = {...PDEF, ...(d.exists ? d.data() : {})}; compute(); bgRender(); }, () => {});
+  startData(db);
 })();
 
 </script>
+
+</html>
