@@ -4,10 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Estoque Franquias</title>
-<link rel="preconnect" href="https://prod.spline.design" crossorigin>
-<link rel="preconnect" href="https://unpkg.com" crossorigin>
-<link rel="modulepreload" href="https://unpkg.com/@splinetool/viewer@2.0.62/build/spline-viewer.js" crossorigin>
-<link rel="preload" href="https://prod.spline.design/yn3RXbJAkp-xHJEm/scene.splinecode" as="fetch" crossorigin>
+<link rel="preconnect" href="https://stream.mux.com" crossorigin>
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js" as="script">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&family=Sora:wght@100..800&family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
@@ -347,11 +345,7 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 #login{--ink:#fff;--sub:#a2a9b8;--nav:#fbfdff;--hair:rgba(196,214,232,.72);--veil:6,10,18;--u:clamp(.8px,calc(100vh/1024),1.25px);--blur:calc(var(--u)*26);--glow:calc(var(--u)*34);--hairline:max(1px,calc(var(--u)*1.6));--ent-line:cubic-bezier(.22,1,.36,1);--ent-soft:cubic-bezier(.25,.8,.35,1);--rise:9px;
   position:fixed;inset:0;z-index:80;background:#000;color:var(--ink);overflow-y:auto;overflow-x:hidden;color-scheme:dark;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
 .lg-art{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;z-index:0;pointer-events:none;user-select:none;-webkit-user-drag:none;background:#000}
-.lg-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:#000}
-.lg-bg spline-viewer{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .5s ease}
-.lg-bg spline-viewer.on{opacity:1}
-.lg-veil{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 30%)}
-@media (prefers-reduced-motion:reduce){.lg-bg spline-viewer{display:none}}
+.lg-veil{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(0deg,#000 0%,rgba(0,0,0,0) 10rem),linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 30%)}
 .lg-wrap{position:relative;z-index:1;min-height:100%;display:flex;flex-direction:column;width:100%;max-width:72rem;margin:0 auto;padding:0 clamp(24px,4vw,56px)}
 .lg-main{flex:1;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,420px);gap:clamp(32px,6vw,96px);align-items:center;padding:clamp(40px,8vh,96px) 0}
 .lg-hero{display:grid;gap:22px;justify-items:start}
@@ -434,7 +428,7 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 </style>
 
 <div id="login" role="dialog" aria-labelledby="lgTitle">
-  <div class="lg-bg" id="lgBg" aria-hidden="true"></div>
+  <video class="lg-art" id="lgVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true" data-src="https://stream.mux.com/8wrHPCX2dC3msyYU9ObwqNdm00u3ViXvOSHUMRYSEe5Q.m3u8"></video>
   <div class="lg-veil" aria-hidden="true"></div>
   
   <div class="lg-wrap">
@@ -2403,30 +2397,23 @@ function setSync(on, text){ $('#sync').title = text; $('#sync').innerHTML = `<i 
 
 /* ---------- login ---------- */
 const LG_ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
-const LG_SCENE = 'https://prod.spline.design/yn3RXbJAkp-xHJEm/scene.splinecode';
+let lgHls = null;
 function lgVideoStart(){
-  const bg = $('#lgBg'); if (!bg || bg.firstChild) return;
-  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const mount = () => {
-    const sv = document.createElement('spline-viewer');
-    sv.setAttribute('url', LG_SCENE);
-    sv.addEventListener('load-complete', () => {
-      sv.classList.add('on');
-      [50, 400, 1500].forEach(ms => setTimeout(() => window.dispatchEvent(new Event('resize')), ms));
-    });
-    setTimeout(() => sv.classList.add('on'), 1500);
-    let tries = 0; const hideLogo = setInterval(() => { try { if (sv.shadowRoot){ const st = document.createElement('style'); st.textContent = '#logo{display:none!important}'; sv.shadowRoot.appendChild(st); clearInterval(hideLogo); } } catch {} if (++tries > 40) clearInterval(hideLogo); }, 100);
-    bg.appendChild(sv);
+  const v = $('#lgVideo'); if (!v) return;
+  v.muted = true; v.defaultMuted = true;
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){ v.pause(); return; }
+  const play = () => { const p = v.play(); if (p) p.catch(() => { const k = () => v.play().catch(() => {}); ['pointerdown','keydown','touchstart'].forEach(ev => document.addEventListener(ev, k, {once:true, passive:true})); }); };
+  if (v.dataset.ready){ play(); return; }
+  const src = v.dataset.src; v.dataset.ready = '1';
+  if (!/\.m3u8(\?|$)/.test(src)){ v.src = src; play(); return; }
+  const go = () => {
+    if (window.Hls && Hls.isSupported()){ lgHls = new Hls({enableWorker:false, capLevelToPlayerSize:true, startLevel:-1}); lgHls.loadSource(src); lgHls.attachMedia(v); lgHls.on(Hls.Events.MANIFEST_PARSED, play); }
+    else if (v.canPlayType('application/vnd.apple.mpegurl')){ v.src = src; play(); }
   };
-  if (customElements.get('spline-viewer')) mount();
-  else {
-    const s = document.createElement('script'); s.type = 'module';
-    s.src = 'https://unpkg.com/@splinetool/viewer@2.0.62/build/spline-viewer.js';
-    s.onload = () => customElements.whenDefined('spline-viewer').then(mount);
-    document.head.appendChild(s);
-  }
+  if (window.Hls) go();
+  else { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js'; s.onload = go; s.onerror = go; document.head.appendChild(s); }
 }
-function lgVideoStop(){ const bg = $('#lgBg'); if (bg) bg.innerHTML = ''; }
+function lgVideoStop(){ const v = $('#lgVideo'); if (v) try { v.pause(); } catch {} }
 /* a entrada é CSS puro; isto só a aposenta quando termina, para não repetir */
 (() => {
   const root = $('#login'), last = document.querySelector('#login .lg-btn'); if (!root || !last) return;
