@@ -2376,7 +2376,8 @@ function lgVideoStart(){
   const v = $('#lgVideo'); if (!v || v.dataset.on) return; v.dataset.on = '1';
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   v.muted = true; v.defaultMuted = true; v.setAttribute('muted', '');
-  v.addEventListener('playing', () => v.classList.add('on'), {once:true});
+  ['loadeddata','playing'].forEach(ev => v.addEventListener(ev, () => v.classList.add('on'), {once:true}));
+  v.setAttribute('preload', 'auto');
   const kick = () => { if (v.paused && v.dataset.on) v.play().catch(() => {}); };
   v.addEventListener('canplay', kick);
   ['pointerdown','keydown','touchstart'].forEach(ev => document.addEventListener(ev, kick, {once:true, passive:true}));
