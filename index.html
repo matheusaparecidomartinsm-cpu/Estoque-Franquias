@@ -342,8 +342,8 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 /* ---------- tela de login: vídeo de fundo, vidro líquido, Instrument Serif + Barlow ---------- */
 #login{position:fixed;inset:0;z-index:80;background:#000;color:#fff;overflow-y:auto;overflow-x:hidden;color-scheme:dark;font-family:'Barlow',var(--f)}
 .lg-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
-.lg-bg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease}
-.lg-bg video.on{opacity:1}
+.lg-bg spline-viewer{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 1.4s ease}
+.lg-bg spline-viewer.on{opacity:1}
 .lg-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 50%,rgba(0,0,0,.25),rgba(0,0,0,.7))}
 .lg-fade{position:fixed;left:0;right:0;height:200px;z-index:1;pointer-events:none}
 .lg-fade.t{top:0;background:linear-gradient(to bottom,#000,transparent)}
@@ -393,7 +393,7 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 @keyframes lgin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media (max-width:900px){.lg-main{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;gap:34px;padding-top:44px}.lg-hero{justify-items:center}.lg-hero h1{max-width:none}.lg-card{width:100%;max-width:440px;text-align:left}.lg-bar{flex-direction:column;justify-content:center;text-align:center}}
 @media (max-width:420px){.lg-card{padding:28px 22px;border-radius:24px}.lg-logo{width:78%}}
-@media (prefers-reduced-motion:reduce){.lg-bg video{display:none}.lg-in{animation:none}}
+@media (prefers-reduced-motion:reduce){.lg-bg spline-viewer{display:none}.lg-in{animation:none}}
 /* usuário conectado e gestão de usuários */
 .me{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);padding-left:8px;border-left:1px solid var(--line-soft);margin-left:4px}
 .avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--surface-3);color:var(--accent);font:600 12.5px var(--display);text-transform:uppercase}
@@ -405,7 +405,7 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 </style>
 
 <div id="login" role="dialog" aria-labelledby="lgTitle">
-  <div class="lg-bg" aria-hidden="true"><video id="lgVideo" autoplay loop muted playsinline preload="auto"></video></div>
+  <div class="lg-bg" aria-hidden="true" id="lgBg"></div>
   <div class="lg-fade t" aria-hidden="true"></div><div class="lg-fade b" aria-hidden="true"></div>
   <div class="lg-wrap">
     <div class="lg-main">
@@ -2370,25 +2370,29 @@ function setSync(on, text){ $('#sync').title = text; $('#sync').innerHTML = `<i 
 
 /* ---------- login ---------- */
 const LG_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>';
-const LG_VIDEO = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_145606_ab143199-b593-4941-bb1b-9afca215416b.mp4';
-let lgHls = null;
+const LG_SCENE = 'https://prod.spline.design/yn3RXbJAkp-xHJEm/scene.splinecode';
 function lgVideoStart(){
-  const v = $('#lgVideo'); if (!v || v.dataset.on) return; v.dataset.on = '1';
+  const bg = $('#lgBg'); if (!bg || bg.firstChild) return;
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  v.muted = true; v.defaultMuted = true; v.setAttribute('muted', '');
-  v.addEventListener('playing', () => v.classList.add('on'), {once:true});
-  const kick = () => { if (v.paused && v.dataset.on) v.play().catch(() => {}); };
-  v.addEventListener('canplay', kick);
-  ['pointerdown','keydown','touchstart'].forEach(ev => document.addEventListener(ev, kick, {once:true, passive:true}));
-  const go = () => {
-    if (window.Hls && Hls.isSupported()){ lgHls = new Hls({capLevelToPlayerSize:true}); lgHls.loadSource(LG_VIDEO); lgHls.attachMedia(v); lgHls.on(Hls.Events.MANIFEST_PARSED, () => v.play().catch(() => {})); }
-    else if (v.canPlayType('application/vnd.apple.mpegurl')){ v.src = LG_VIDEO; v.play().catch(() => {}); }
+  const mount = () => {
+    const sv = document.createElement('spline-viewer');
+    sv.setAttribute('url', LG_SCENE); sv.setAttribute('loading-anim-type', 'none');
+    sv.addEventListener('load-complete', () => {
+      sv.classList.add('on');
+      try { const l = sv.shadowRoot && sv.shadowRoot.querySelector('#logo'); if (l) l.remove(); } catch {}
+    });
+    setTimeout(() => sv.classList.add('on'), 4000);
+    bg.appendChild(sv);
   };
-  if (!/\.m3u8(\?|$)/.test(LG_VIDEO)){ v.src = LG_VIDEO; v.play().catch(() => {}); return; }
-  if (window.Hls) go();
-  else { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js'; s.onload = go; s.onerror = go; document.head.appendChild(s); }
+  if (customElements.get('spline-viewer')) mount();
+  else {
+    const s = document.createElement('script'); s.type = 'module';
+    s.src = 'https://unpkg.com/@splinetool/viewer@1.10.57/build/spline-viewer.js';
+    s.onload = () => customElements.whenDefined('spline-viewer').then(mount);
+    document.head.appendChild(s);
+  }
 }
-function lgVideoStop(){ const v = $('#lgVideo'); if (!v) return; try { v.pause(); } catch {} if (lgHls){ lgHls.destroy(); lgHls = null; } v.removeAttribute('src'); v.classList.remove('on'); delete v.dataset.on; }
+function lgVideoStop(){ const bg = $('#lgBg'); if (bg) bg.innerHTML = ''; }
 const AUTH_KEY = 'ef-session', ITER = 150000;
 let ME = null, USERS = [], MODE = 'wait';
 const enc = new TextEncoder();
