@@ -344,10 +344,10 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 .lg-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
 .lg-bg spline-viewer{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 1.4s ease}
 .lg-bg spline-viewer.on{opacity:1}
-.lg-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 50%,rgba(0,0,0,.25),rgba(0,0,0,.7))}
+.lg-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 40%,rgba(0,0,0,.15),rgba(0,0,0,.35))}
 .lg-fade{position:fixed;left:0;right:0;height:200px;z-index:1;pointer-events:none}
 .lg-fade.t{top:0;background:linear-gradient(to bottom,#000,transparent)}
-.lg-fade.b{bottom:0;background:linear-gradient(to top,#000,transparent)}
+.lg-fade.b{bottom:0;height:70px;background:linear-gradient(to top,rgba(0,0,0,.6),transparent)}
 .lg-wrap{position:relative;z-index:10;min-height:100%;display:flex;flex-direction:column;padding:0 clamp(24px,6vw,96px)}
 .lg-main{flex:1;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,420px);gap:clamp(32px,6vw,96px);align-items:center;padding:clamp(40px,8vh,96px) 0}
 .lg-hero{display:grid;gap:22px;justify-items:start}
@@ -2382,6 +2382,7 @@ function lgVideoStart(){
       try { const l = sv.shadowRoot && sv.shadowRoot.querySelector('#logo'); if (l) l.remove(); } catch {}
     });
     setTimeout(() => sv.classList.add('on'), 4000);
+    let tries = 0; const hideLogo = setInterval(() => { try { const l = sv.shadowRoot && sv.shadowRoot.querySelector('#logo'); if (l){ l.remove(); clearInterval(hideLogo); } } catch {} if (++tries > 40) clearInterval(hideLogo); }, 250);
     bg.appendChild(sv);
   };
   if (customElements.get('spline-viewer')) mount();
