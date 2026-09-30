@@ -2379,10 +2379,9 @@ function lgVideoStart(){
     sv.setAttribute('url', LG_SCENE); sv.setAttribute('loading-anim-type', 'none');
     sv.addEventListener('load-complete', () => {
       sv.classList.add('on');
-      try { const l = sv.shadowRoot && sv.shadowRoot.querySelector('#logo'); if (l) l.remove(); } catch {}
     });
     setTimeout(() => sv.classList.add('on'), 4000);
-    let tries = 0; const hideLogo = setInterval(() => { try { const l = sv.shadowRoot && sv.shadowRoot.querySelector('#logo'); if (l){ l.remove(); clearInterval(hideLogo); } } catch {} if (++tries > 40) clearInterval(hideLogo); }, 250);
+    let tries = 0; const hideLogo = setInterval(() => { try { if (sv.shadowRoot){ const st = document.createElement('style'); st.textContent = '#logo{display:none!important}'; sv.shadowRoot.appendChild(st); clearInterval(hideLogo); } } catch {} if (++tries > 40) clearInterval(hideLogo); }, 100);
     bg.appendChild(sv);
   };
   if (customElements.get('spline-viewer')) mount();
