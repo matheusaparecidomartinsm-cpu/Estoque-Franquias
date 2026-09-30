@@ -2701,9 +2701,10 @@ function lgGLStart(){
   const loop = now => { draw(now); raf = running ? requestAnimationFrame(loop) : 0; };
   const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   lgGL = {
-    run(){ if (running) return; if (still){ draw(performance.now()); cv.classList.add('on'); return; } running = true; raf = requestAnimationFrame(loop); cv.classList.add('on'); },
+    run(){ if (running) return; draw(performance.now()); cv.classList.add('on'); if (still) return; running = true; raf = requestAnimationFrame(loop); },
     stop(){ running = false; cancelAnimationFrame(raf); raf = 0; }
   };
+  addEventListener('resize', () => { if (lgGL && !running) draw(performance.now()); }, {passive:true});
   cv.addEventListener('webglcontextlost', e => { e.preventDefault(); lgGL.stop(); cv.classList.remove('on'); lgVideoFallback(); });
   document.addEventListener('visibilitychange', () => { if (!lgGL) return; if (document.hidden) lgGL.stop(); else if (!$('#login').hidden) lgGL.run(); });
   lgGL.run();
