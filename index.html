@@ -2383,7 +2383,7 @@ function lgVideoStart(){
     });
     setTimeout(() => sv.classList.add('on'), 4000);
     let tries = 0; const hideLogo = setInterval(() => { try { if (sv.shadowRoot){ const st = document.createElement('style'); st.textContent = '#logo{display:none!important}'; sv.shadowRoot.appendChild(st); clearInterval(hideLogo); } } catch {} if (++tries > 40) clearInterval(hideLogo); }, 100);
-    requestAnimationFrame(() => requestAnimationFrame(() => bg.appendChild(sv)));
+    setTimeout(() => bg.appendChild(sv), 60);
   };
   if (customElements.get('spline-viewer')) mount();
   else {
