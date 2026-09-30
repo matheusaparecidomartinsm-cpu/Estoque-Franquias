@@ -2376,7 +2376,7 @@ function lgVideoStart(){
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const mount = () => {
     const sv = document.createElement('spline-viewer');
-    sv.setAttribute('url', LG_SCENE); sv.setAttribute('loading-anim-type', 'none');
+    sv.setAttribute('url', LG_SCENE);
     sv.addEventListener('load-complete', () => {
       sv.classList.add('on');
     });
