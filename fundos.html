@@ -19,6 +19,8 @@ h1{font-weight:600;font-size:22px;margin:0 0 6px}p{color:#aaa;margin:0 0 20px}
 <div class="c"><video src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_064122_c4750c0e-7476-4b44-94a2-a85a65c63bf2.mp4" autoplay muted loop playsinline></video><b>5 · Onda azul curva</b><span>Faixa azul sobre preto</span></div>
 <div class="c"><video data-hls="https://stream.mux.com/tLkHO1qZoaaQOUeVWo8hEBeGQfySP02EPS02BmnNFyXys.m3u8" autoplay muted loop playsinline></video><b>6 · Fios verde-água</b><span>Linhas de luz caindo</span></div>
 <div class="c"><video src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4" autoplay muted loop playsinline></video><b>7 · Campo de flores</b><span>Noite com flores iluminadas</span></div>
+<div class="c"><spline-viewer url="https://prod.spline.design/yn3RXbJAkp-xHJEm/scene.splinecode" style="filter:hue-rotate(95deg) saturate(1.3)"></spline-viewer><b>8 · Onda 3D vermelha (Spline)</b><span>A 3 com a cor puxada para o vermelho</span></div>
+<div class="c"><video data-hls="https://stream.mux.com/8wrHPCX2dC3msyYU9ObwqNdm00u3ViXvOSHUMRYSEe5Q.m3u8" autoplay muted loop playsinline style="filter:hue-rotate(95deg) saturate(1.3)"></video><b>9 · Ondas vermelhas</b><span>A 1 com a cor puxada para o vermelho</span></div>
 </div>
 <script>
 document.querySelectorAll('video[data-hls]').forEach(v=>{const s=v.dataset.hls;if(window.Hls&&Hls.isSupported()){const h=new Hls({enableWorker:false});h.loadSource(s);h.attachMedia(v);h.on(Hls.Events.MANIFEST_PARSED,()=>v.play().catch(()=>{}));}else{v.src=s;}});
