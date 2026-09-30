@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Estoque Franquias</title>
 <link rel="preconnect" href="https://d8j0ntlcm91z4.cloudfront.net" crossorigin>
-<link rel="preload" href="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/130837c4-0244-4f37-9c61-8d801d93fd29.jpg" as="image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&family=Sora:wght@100..800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&family=Sora:wght@100..800&family=Inter:wght@400;500;600;700;800;900&display=swap">
 <style>
 /* Layout: uma pergunta por tela. Resumo abre com a frase de situação do dia, uma barra de status e duas listas curtas.
    Superfícies brancas só onde há lista para ler; o resto é espaço. Tudo alinhado à esquerda. */
@@ -342,11 +341,13 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 @media (max-width:640px){.lead h1{font-size:26px}.ctx .where{flex-basis:100%}.search{width:100%}.sel{max-width:none;flex:1}}
 [hidden]{display:none!important}
 /* ---------- tela de login: vídeo de fundo, véu, vidro dourado/azul, Sora ---------- */
-#login{--ink:#fff;--sub:#a2a9b8;--nav:#fbfdff;--hair:rgba(196,214,232,.72);--veil:6,10,18;--u:clamp(.8px,calc(100vh/1024),1.25px);--blur:calc(var(--u)*26);--glow:calc(var(--u)*34);--hairline:max(1px,calc(var(--u)*1.6));--ent-line:cubic-bezier(.16,1,.3,1);--ent-soft:cubic-bezier(.25,.8,.35,1);--rise:9px;
-  position:fixed;inset:0;z-index:80;background:#02060f;color:var(--ink);overflow-y:auto;overflow-x:hidden;color-scheme:dark;font-family:'Sora',system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
-.lg-art{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;z-index:0;pointer-events:none;user-select:none;-webkit-user-drag:none;background:#03060c}
-.lg-veil{position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(140% 60% at 50% 40%,rgba(var(--veil),.16) 0%,rgba(var(--veil),.057) 50%,rgba(var(--veil),0) 100%),linear-gradient(180deg,rgba(var(--veil),0) 45%,rgba(var(--veil),.10) 100%),linear-gradient(90deg,rgba(var(--veil),.42) 0%,rgba(var(--veil),.12) 34%,rgba(var(--veil),0) 50%,rgba(var(--veil),.12) 66%,rgba(var(--veil),.42) 100%)}
-.lg-wrap{position:relative;z-index:1;min-height:100%;display:flex;flex-direction:column;padding:0 clamp(24px,6vw,96px)}
+#login{--ink:#fff;--sub:#a2a9b8;--nav:#fbfdff;--hair:rgba(196,214,232,.72);--veil:6,10,18;--u:clamp(.8px,calc(100vh/1024),1.25px);--blur:calc(var(--u)*26);--glow:calc(var(--u)*34);--hairline:max(1px,calc(var(--u)*1.6));--ent-line:cubic-bezier(.22,1,.36,1);--ent-soft:cubic-bezier(.25,.8,.35,1);--rise:9px;
+  position:fixed;inset:0;z-index:80;background:#0c0c0c;color:var(--ink);overflow-y:auto;overflow-x:hidden;color-scheme:dark;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+.lg-art{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;z-index:0;pointer-events:none;user-select:none;-webkit-user-drag:none;background:#0c0c0c}
+.lg-veil{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(12,12,12,.25) 0%,rgba(12,12,12,0) 30%,rgba(12,12,12,0) 70%,rgba(12,12,12,.35) 100%)}
+.lg-guide{display:none;position:fixed;top:0;bottom:0;left:50%;width:1px;background:rgba(255,255,255,.1);z-index:5;pointer-events:none}
+@media (min-width:768px){.lg-guide{display:block}.lg-guide.l{translate:calc(-50% - 36rem) 0}.lg-guide.r{translate:calc(-50% + 36rem) 0}}
+.lg-wrap{position:relative;z-index:1;min-height:100%;display:flex;flex-direction:column;width:100%;max-width:72rem;margin:0 auto;padding:0 clamp(24px,4vw,56px)}
 .lg-main{flex:1;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,420px);gap:clamp(32px,6vw,96px);align-items:center;padding:clamp(40px,8vh,96px) 0}
 .lg-hero{display:grid;gap:22px;justify-items:start}
 .lg-logo{--rx:0deg;--ry:0deg;position:relative;width:min(360px,72%);aspect-ratio:1046/383;perspective:900px}
@@ -364,40 +365,37 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 .lg-logo .shine::before{content:"";position:absolute;top:0;bottom:0;left:-60%;width:60%;background:linear-gradient(105deg,transparent,rgba(255,255,255,.7) 50%,transparent);transform:translateX(0);animation:lgshine 1.8s cubic-bezier(.4,0,.2,1) 1.4s 1 both}
 @keyframes lgshine{from{transform:translateX(0)}to{transform:translateX(330%)}}
 @media (prefers-reduced-motion:reduce){.lg-logo .shine::before{animation:none;opacity:0}.lg-logo .tilt{transform:none}}
-/* cartão: a receita de vidro do painel, em escala de cartão */
-.lg-card{position:relative;border-radius:calc(var(--u)*26);padding:calc(var(--u)*30) calc(var(--u)*28);display:grid;gap:18px;
-  background:linear-gradient(180deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,.045) 100%),linear-gradient(90deg,rgba(255,226,178,.06) 0%,rgba(150,196,244,.06) 100%),linear-gradient(180deg,rgba(6,12,22,.55) 0%,rgba(6,12,22,.66) 100%);
-  -webkit-backdrop-filter:blur(var(--blur)) saturate(.45);backdrop-filter:blur(var(--blur)) saturate(.45);box-shadow:0 calc(var(--u)*14) calc(var(--u)*38) rgba(2,6,14,.45)}
-.lg-card::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:var(--hairline);pointer-events:none;background:linear-gradient(180deg,rgba(255,252,246,.55) 0%,rgba(255,252,246,.10) 40%,rgba(255,252,246,0) 70%),linear-gradient(90deg,rgba(255,228,182,.55) 0%,rgba(226,230,234,.03) 35%,rgba(214,226,240,.02) 65%,rgba(186,224,247,.55) 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+/* cartão: liquid-glass */
+.lg-card{position:relative;overflow:hidden;border-radius:24px;padding:28px 26px;display:grid;gap:18px;background:rgba(12,12,12,.32);background-blend-mode:luminosity;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);box-shadow:inset 0 1px 1px rgba(255,255,255,.1)}
+.lg-card::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.4px;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.45) 0%,rgba(255,255,255,.15) 20%,rgba(255,255,255,0) 40%,rgba(255,255,255,0) 60%,rgba(255,255,255,.15) 80%,rgba(255,255,255,.45) 100%);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude}
 .lg-card h2{font-weight:400;font-variation-settings:'wght' 424;font-size:30px;margin:0;color:var(--ink)}
 .lg-card .sub{margin:0;color:var(--sub);font-variation-settings:'wght' 446;font-size:14px;line-height:1.5}
 .lg-form{display:grid;gap:15px}
 .lg-field{display:grid;gap:8px}
-.lg-field label{font-size:12px;font-variation-settings:'wght' 506;letter-spacing:.06em;text-transform:uppercase;color:#e2ebf5;opacity:.8}
+.lg-field label{font-size:14px;font-weight:500;color:rgba(255,255,255,.7)}
 .lg-input{position:relative}
-.lg-input input{width:100%;appearance:none;background:rgba(255,255,255,.05);color:var(--ink);border:var(--hairline) solid rgba(196,214,232,.28);border-radius:999px;font:400 15px 'Sora',system-ui,sans-serif;font-variation-settings:'wght' 446;padding:13px 18px;min-height:46px;transition:border-color .15s,background-color .15s}
+.lg-input input{width:100%;appearance:none;background:rgba(255,255,255,.05);color:var(--ink);border:1px solid rgba(255,255,255,.1);border-radius:999px;font:400 15px 'Inter',system-ui,sans-serif;padding:13px 18px;min-height:46px;transition:border-color .15s,background-color .15s}
 .lg-input input::placeholder{color:rgba(255,255,255,.35)}
-.lg-input input:focus{outline:none;border-color:var(--hair);background:rgba(255,255,255,.09)}
+.lg-input input:focus{outline:none;border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.08)}
 .lg-input input.pw{padding-right:96px}
-.lg-eye{position:absolute;right:6px;top:50%;translate:0 -50%;border:0;background:transparent;color:var(--sub);font:500 12.5px 'Sora',system-ui,sans-serif;padding:9px 13px;border-radius:999px;cursor:pointer;min-height:36px}
+.lg-eye{position:absolute;right:6px;top:50%;translate:0 -50%;border:0;background:transparent;color:rgba(255,255,255,.6);font:500 12.5px 'Inter',system-ui,sans-serif;padding:9px 13px;border-radius:999px;cursor:pointer;min-height:36px}
 .lg-eye:hover{background:rgba(255,255,255,.08);color:var(--ink)}
 .lg-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--sub)}
 .lg-check{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
 .lg-check input{accent-color:#fff;width:16px;height:16px}
-/* botão: o vidro da CTA — quente à esquerda, frio à direita, como a luz do vídeo */
-.lg-btn{position:relative;appearance:none;border:0;border-radius:999px;color:var(--ink);font:400 16px 'Sora',system-ui,sans-serif;font-variation-settings:'wght' 497;letter-spacing:-.01em;padding:14px 22px;min-height:48px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:12px;
-  background:linear-gradient(180deg,rgba(6,12,22,0) 45%,rgba(6,12,22,.12) 78%,rgba(6,12,22,.28) 100%),linear-gradient(90deg,rgba(255,226,178,.17) 0%,rgba(255,236,208,.07) 22%,rgba(176,206,238,.03) 55%,rgba(150,196,244,.09) 100%),linear-gradient(90deg,rgba(255,255,255,.24) 0%,rgba(255,255,255,.17) 12%,rgba(255,255,255,.11) 26%,rgba(255,255,255,.07) 42%,rgba(255,255,255,.05) 60%,rgba(255,255,255,.04) 80%,rgba(255,255,255,.04) 100%);
-  box-shadow:0 calc(var(--u)*-2) calc(var(--u)*20) rgba(255,224,176,.20),0 0 var(--glow) rgba(168,204,252,.16),inset 0 var(--hairline) 0 0 rgba(255,251,242,.45);transition:box-shadow .25s ease,filter .2s ease}
-.lg-btn::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:var(--hairline);pointer-events:none;background:linear-gradient(180deg,rgba(255,252,246,.95) 0%,rgba(255,252,246,.20) 45%,rgba(255,252,246,0) 78%),linear-gradient(90deg,rgba(255,228,182,.95) 0%,rgba(250,236,210,.70) 12%,rgba(226,230,234,.03) 32%,rgba(214,226,240,.02) 62%,rgba(200,228,250,.70) 90%,rgba(186,224,247,.95) 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
-.lg-btn:hover{filter:brightness(1.12);box-shadow:0 calc(var(--u)*-2) calc(var(--u)*26) rgba(255,224,176,.30),0 0 calc(var(--glow)*1.3) rgba(168,204,252,.24),inset 0 var(--hairline) 0 0 rgba(255,251,242,.55)}
-.lg-btn:active{scale:.985}
+/* botão: pílula branca */
+.lg-btn{position:relative;appearance:none;border:0;border-radius:999px;background:#fff;color:#000;font:500 14px 'Inter',system-ui,sans-serif;padding:12px 20px;min-height:46px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background-color .2s ease,scale .15s ease}
+.lg-btn:hover{background:rgba(255,255,255,.9)}
+.lg-btn:active{scale:.98}
+.lg-btn svg{transition:translate .2s ease}
+.lg-btn:hover svg{translate:1px 0}
 .lg-btn:focus-visible,.lg-eye:focus-visible,.lg-input input:focus-visible{outline:2px solid #9fe0ff;outline-offset:3px}
 .lg-btn:disabled{opacity:.6;cursor:progress}
-.lg-btn svg{width:16px;height:11px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:square;stroke-linejoin:miter}
+.lg-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .lg-msg{border-radius:16px;padding:11px 14px;font-size:13.5px;background:rgba(238,80,74,.14);border:1px solid rgba(238,80,74,.35);color:#ffc9c5}
 .lg-msg.ok{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);color:rgba(255,255,255,.75)}
 .lg-foot{font-size:12.5px;color:var(--sub);line-height:1.5;margin:0}
-.lg-spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;animation:lgsp .8s linear infinite}
+.lg-spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(0,0,0,.2);border-top-color:#000;animation:lgsp .8s linear infinite}
 @keyframes lgsp{to{rotate:360deg}}
 .lg-shake{animation:lgsh .35s}
 @keyframes lgsh{20%,60%{translate:-6px 0}40%,80%{translate:6px 0}}
@@ -416,7 +414,6 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
   #login:not(.is-entered) .lg-btn{animation:en-lift .8s var(--ent-line) .72s backwards}
 }
 @media (max-width:900px){.lg-main{grid-template-columns:minmax(0,1fr);justify-items:center;gap:30px;padding-top:44px}.lg-hero{justify-items:center;width:100%}.lg-logo{width:min(300px,72%)}.lg-card{width:100%;max-width:440px}
-  .lg-veil{background:radial-gradient(130% 44% at 50% 45%,rgba(var(--veil),.50) 0%,rgba(var(--veil),.26) 55%,rgba(var(--veil),0) 100%),linear-gradient(180deg,rgba(var(--veil),.34) 0%,rgba(var(--veil),0) 20%,rgba(var(--veil),0) 60%,rgba(var(--veil),.36) 100%)}
   #login{--rise:6px}}
 @media (max-width:420px){.lg-card{padding:26px 20px}.lg-logo{width:78%}}
 /* usuário conectado e gestão de usuários */
@@ -430,8 +427,9 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 </style>
 
 <div id="login" role="dialog" aria-labelledby="lgTitle">
-  <video class="lg-art" id="lgVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true" poster="https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/130837c4-0244-4f37-9c61-8d801d93fd29.jpg" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_104303_0c6d60b2-9353-408e-9449-585108a22fb5.mp4"></video>
+  <video class="lg-art" id="lgVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true" src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_064122_c4750c0e-7476-4b44-94a2-a85a65c63bf2.mp4"></video>
   <div class="lg-veil" aria-hidden="true"></div>
+  <div class="lg-guide l" aria-hidden="true"></div><div class="lg-guide r" aria-hidden="true"></div>
   <div class="lg-wrap">
     <div class="lg-main">
       <section class="lg-hero">
@@ -451,7 +449,7 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
           <div class="lg-field"><label for="lgUser">Usuário</label><div class="lg-input"><input id="lgUser" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required></div></div>
           <div class="lg-field"><label for="lgPass">Senha</label><div class="lg-input"><input id="lgPass" class="pw" type="password" autocomplete="current-password" required><button class="lg-eye" type="button" id="lgEye" aria-label="Mostrar senha">Mostrar</button></div></div>
           <div class="lg-row"><label class="lg-check"><input type="checkbox" id="lgKeep" checked> Manter conectado nesta aba</label><span class="lg-caps" id="lgCaps" hidden>Caps Lock ligado</span></div>
-          <button class="lg-btn" type="submit" id="lgBtn">Entrar <svg viewBox="0 0 16 11" aria-hidden="true"><path d="M0 5.5 H14.6 M10.3 1.2 L14.9 5.5 L10.3 9.8"/></svg></button>
+          <button class="lg-btn" type="submit" id="lgBtn">Entrar <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button>
         </form>
         <p class="lg-foot" id="lgNote" hidden></p>
       </div>
@@ -2397,7 +2395,7 @@ $('#fClear').onclick = () => { F = {q:'', fr:'', cat:'', st:new Set(), os:''}; $
 function setSync(on, text){ $('#sync').title = text; $('#sync').innerHTML = `<i class="${on ? 'on' : ''}"></i><span>${on ? 'compartilhado' : 'sem conexão'}</span>`; }
 
 /* ---------- login ---------- */
-const LG_ARROW = '<svg viewBox="0 0 16 11" aria-hidden="true"><path d="M0 5.5 H14.6 M10.3 1.2 L14.9 5.5 L10.3 9.8"/></svg>';
+const LG_ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>';
 function lgVideoStart(){
   const v = $('#lgVideo'); if (!v) return;
   v.muted = true; v.defaultMuted = true;
