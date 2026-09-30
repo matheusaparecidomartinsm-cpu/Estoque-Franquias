@@ -2387,7 +2387,7 @@ function lgVideoStart(){
   if (customElements.get('spline-viewer')) mount();
   else {
     const s = document.createElement('script'); s.type = 'module';
-    s.src = 'https://unpkg.com/@splinetool/viewer@1.10.57/build/spline-viewer.js';
+    s.src = 'https://unpkg.com/@splinetool/viewer@2.0.62/build/spline-viewer.js';
     s.onload = () => customElements.whenDefined('spline-viewer').then(mount);
     document.head.appendChild(s);
   }
