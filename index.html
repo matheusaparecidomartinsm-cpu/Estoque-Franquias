@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Estoque Franquias</title>
+<link rel="preconnect" href="https://prod.spline.design" crossorigin>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="modulepreload" href="https://unpkg.com/@splinetool/viewer@2.0.62/build/spline-viewer.js" crossorigin>
+<link rel="preload" href="https://prod.spline.design/yn3RXbJAkp-xHJEm/scene.splinecode" as="fetch" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&display=swap">
@@ -342,7 +346,7 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 /* ---------- tela de login: vídeo de fundo, vidro líquido, Instrument Serif + Barlow ---------- */
 #login{position:fixed;inset:0;z-index:80;background:#000;color:#fff;overflow-y:auto;overflow-x:hidden;color-scheme:dark;font-family:'Barlow',var(--f)}
 .lg-bg{position:fixed;inset:0;z-index:0;pointer-events:none}
-.lg-bg spline-viewer{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 1.4s ease}
+.lg-bg spline-viewer{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .5s ease}
 .lg-bg spline-viewer.on{opacity:1}
 .lg-bg::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 40%,rgba(0,0,0,.15),rgba(0,0,0,.35))}
 .lg-fade{position:fixed;left:0;right:0;height:200px;z-index:1;pointer-events:none}
@@ -2378,9 +2382,9 @@ function lgVideoStart(){
       sv.classList.add('on');
       [50, 400, 1500].forEach(ms => setTimeout(() => window.dispatchEvent(new Event('resize')), ms));
     });
-    setTimeout(() => sv.classList.add('on'), 4000);
+    setTimeout(() => sv.classList.add('on'), 1500);
     let tries = 0; const hideLogo = setInterval(() => { try { if (sv.shadowRoot){ const st = document.createElement('style'); st.textContent = '#logo{display:none!important}'; sv.shadowRoot.appendChild(st); clearInterval(hideLogo); } } catch {} if (++tries > 40) clearInterval(hideLogo); }, 100);
-    setTimeout(() => bg.appendChild(sv), 60);
+    bg.appendChild(sv);
   };
   if (customElements.get('spline-viewer')) mount();
   else {
@@ -2609,6 +2613,7 @@ function startData(db){
 }
 
 /* ---------- dados compartilhados ---------- */
+try { if (!$('#login').hidden) lgVideoStart(); } catch {}
 (async () => {
   const tab = (location.hash || '').slice(1);
   go(TABS.includes(tab) ? tab : 'resumo');
