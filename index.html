@@ -2375,7 +2375,11 @@ let lgHls = null;
 function lgVideoStart(){
   const v = $('#lgVideo'); if (!v || v.dataset.on) return; v.dataset.on = '1';
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  v.muted = true; v.defaultMuted = true; v.setAttribute('muted', '');
   v.addEventListener('playing', () => v.classList.add('on'), {once:true});
+  const kick = () => { if (v.paused && v.dataset.on) v.play().catch(() => {}); };
+  v.addEventListener('canplay', kick);
+  ['pointerdown','keydown','touchstart'].forEach(ev => document.addEventListener(ev, kick, {once:true, passive:true}));
   const go = () => {
     if (window.Hls && Hls.isSupported()){ lgHls = new Hls({capLevelToPlayerSize:true}); lgHls.loadSource(LG_VIDEO); lgHls.attachMedia(v); lgHls.on(Hls.Events.MANIFEST_PARSED, () => v.play().catch(() => {})); }
     else if (v.canPlayType('application/vnd.apple.mpegurl')){ v.src = LG_VIDEO; v.play().catch(() => {}); }
