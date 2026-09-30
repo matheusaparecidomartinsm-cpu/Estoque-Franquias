@@ -2370,7 +2370,7 @@ function setSync(on, text){ $('#sync').title = text; $('#sync').innerHTML = `<i 
 
 /* ---------- login ---------- */
 const LG_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>';
-const LG_VIDEO = 'https://stream.mux.com/8wrHPCX2dC3msyYU9ObwqNdm00u3ViXvOSHUMRYSEe5Q.m3u8';
+const LG_VIDEO = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_145606_ab143199-b593-4941-bb1b-9afca215416b.mp4';
 let lgHls = null;
 function lgVideoStart(){
   const v = $('#lgVideo'); if (!v || v.dataset.on) return; v.dataset.on = '1';
@@ -2384,6 +2384,7 @@ function lgVideoStart(){
     if (window.Hls && Hls.isSupported()){ lgHls = new Hls({capLevelToPlayerSize:true}); lgHls.loadSource(LG_VIDEO); lgHls.attachMedia(v); lgHls.on(Hls.Events.MANIFEST_PARSED, () => v.play().catch(() => {})); }
     else if (v.canPlayType('application/vnd.apple.mpegurl')){ v.src = LG_VIDEO; v.play().catch(() => {}); }
   };
+  if (!/\.m3u8(\?|$)/.test(LG_VIDEO)){ v.src = LG_VIDEO; v.play().catch(() => {}); return; }
   if (window.Hls) go();
   else { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js'; s.onload = go; s.onerror = go; document.head.appendChild(s); }
 }
