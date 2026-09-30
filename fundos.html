@@ -1,0 +1,26 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fundos do login</title>
+<style>
+body{margin:0;background:#000;color:#fff;font:15px system-ui,sans-serif;padding:24px}
+h1{font-weight:600;font-size:22px;margin:0 0 6px}p{color:#aaa;margin:0 0 20px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.c{background:#111;border:1px solid #222;border-radius:16px;overflow:hidden}
+.c video,.c spline-viewer{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#050505}
+.c b{display:block;padding:12px 14px;font-size:17px}.c span{display:block;padding:0 14px 14px;color:#999;font-size:13px}
+</style>
+<script type="module" src="https://unpkg.com/@splinetool/viewer@2.0.62/build/spline-viewer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js"></script>
+</head><body>
+<h1>Fundos que já usamos no login</h1><p>Me diga o número do que você quer.</p>
+<div class="g">
+<div class="c"><video data-hls="https://stream.mux.com/8wrHPCX2dC3msyYU9ObwqNdm00u3ViXvOSHUMRYSEe5Q.m3u8" autoplay muted loop playsinline></video><b>1 · Ondas roxas</b><span>O primeiro fundo</span></div>
+<div class="c"><video src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260723_145606_ab143199-b593-4941-bb1b-9afca215416b.mp4" autoplay muted loop playsinline></video><b>2 · Esfera prateada</b><span>Reflexos coloridos girando</span></div>
+<div class="c"><spline-viewer url="https://prod.spline.design/yn3RXbJAkp-xHJEm/scene.splinecode"></spline-viewer><b>3 · Onda 3D (Spline)</b><span>Cena 3D interativa</span></div>
+<div class="c"><video src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_104303_0c6d60b2-9353-408e-9449-585108a22fb5.mp4" autoplay muted loop playsinline></video><b>4 · Fios dourados e azuis</b><span>Luz se encontrando no centro</span></div>
+<div class="c"><video src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_064122_c4750c0e-7476-4b44-94a2-a85a65c63bf2.mp4" autoplay muted loop playsinline></video><b>5 · Onda azul curva</b><span>Faixa azul sobre preto</span></div>
+<div class="c"><video data-hls="https://stream.mux.com/tLkHO1qZoaaQOUeVWo8hEBeGQfySP02EPS02BmnNFyXys.m3u8" autoplay muted loop playsinline></video><b>6 · Fios verde-água</b><span>Linhas de luz caindo</span></div>
+<div class="c"><video src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4" autoplay muted loop playsinline></video><b>7 · Campo de flores</b><span>Noite com flores iluminadas</span></div>
+</div>
+<script>
+document.querySelectorAll('video[data-hls]').forEach(v=>{const s=v.dataset.hls;if(window.Hls&&Hls.isSupported()){const h=new Hls({enableWorker:false});h.loadSource(s);h.attachMedia(v);h.on(Hls.Events.MANIFEST_PARSED,()=>v.play().catch(()=>{}));}else{v.src=s;}});
+</script>
+</body></html>
