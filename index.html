@@ -494,6 +494,9 @@ body{font-size:14px;background:var(--bg)}
   position:fixed;inset:0;z-index:80;background:#000;color:var(--ink);overflow-y:auto;overflow-x:hidden;color-scheme:dark;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
 .lg-art{position:fixed;left:0;right:0;top:auto;bottom:-6vh;width:100%;height:78vh;object-fit:cover;object-position:50% 40%;z-index:0;pointer-events:none;user-select:none;-webkit-user-drag:none;background:transparent;filter:hue-rotate(95deg) saturate(1.3) contrast(1.08);-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 38%);mask-image:linear-gradient(180deg,transparent 0%,#000 38%)}
 @media (max-width:900px){.lg-art{height:60vh;bottom:-4vh}}
+.lg-gl{position:fixed;left:0;right:0;bottom:0;width:100%;height:64vh;z-index:0;pointer-events:none;display:block;opacity:0;transition:opacity 1.2s ease}
+.lg-gl.on{opacity:1}
+.lg-art.off{display:none}
 .lg-veil{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(0deg,#000 0%,rgba(0,0,0,0) 10rem),linear-gradient(180deg,rgba(0,0,0,.35) 0%,rgba(0,0,0,0) 30%)}
 .lg-wrap{position:relative;z-index:1;min-height:100%;display:flex;flex-direction:column;width:100%;max-width:72rem;margin:0 auto;padding:0 clamp(24px,4vw,56px)}
 .lg-main{flex:1;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,420px);gap:clamp(32px,6vw,96px);align-items:center;padding:clamp(40px,8vh,96px) 0}
@@ -577,6 +580,7 @@ body{font-size:14px;background:var(--bg)}
 </style>
 
 <div id="login" role="dialog" aria-labelledby="lgTitle">
+  <canvas class="lg-gl" id="lgGL" aria-hidden="true"></canvas>
   <video class="lg-art" id="lgVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true" data-src="https://stream.mux.com/8wrHPCX2dC3msyYU9ObwqNdm00u3ViXvOSHUMRYSEe5Q.m3u8"></video>
   <div class="lg-veil" aria-hidden="true"></div>
   
@@ -2616,8 +2620,8 @@ function setSync(on, text){ $('#sync').title = text; $('#sync').innerHTML = `<i 
 /* ---------- login ---------- */
 const LG_ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
 let lgHls = null;
-function lgVideoStart(){
-  const v = $('#lgVideo'); if (!v) return;
+function lgVideoFallback(){
+  const v = $('#lgVideo'); if (!v) return; v.classList.remove('off');
   v.muted = true; v.defaultMuted = true;
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){ v.pause(); return; }
   const play = () => { const p = v.play(); if (p) p.catch(() => { const k = () => v.play().catch(() => {}); ['pointerdown','keydown','touchstart'].forEach(ev => document.addEventListener(ev, k, {once:true, passive:true})); }); };
@@ -2631,7 +2635,88 @@ function lgVideoStart(){
   if (window.Hls) go();
   else { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js'; s.onload = go; s.onerror = go; document.head.appendChild(s); }
 }
+const LG_GLSL = `
+precision highp float;
+uniform vec2 R; uniform float T; uniform float S;
+vec4 ribbon(vec2 p, float base, float amp, float f, float sp, float ph, float w){
+  float x = p.x;
+  float y = base + amp*sin(x*f + T*sp + ph) + amp*0.5*sin(x*f*1.8 - T*sp*0.8 + ph*1.3) + amp*0.22*sin(x*f*3.3 + T*sp*1.2 + ph*2.1);
+  float dy = amp*f*cos(x*f + T*sp + ph) + amp*0.9*f*cos(x*f*1.8 - T*sp*0.8 + ph*1.3);
+  float tw = 0.55 + 0.45*sin(x*f*0.9 + T*sp*0.6 + ph*0.7);      // twist: ribbon narrows as it turns
+  float ww = w*(0.35 + 0.65*tw);
+  float t = (p.y - y) / sqrt(1.0 + dy*dy) / ww;
+  float cov = smoothstep(1.0, 0.86, abs(t));
+  if (cov <= 0.0) return vec4(0.0);
+  // pseudo normal of a folded glass sheet
+  float side = sin(x*f*0.9 + T*sp*0.6 + ph*0.7);
+  float bend = t*1.35*(0.35 + 0.65*abs(side)) * (side >= 0.0 ? 1.0 : -1.0) * smoothstep(0.0, 0.25, abs(side)) + t*0.35;
+  vec3 n = normalize(vec3(-dy*0.7, bend, 0.85));
+  vec3 L = normalize(vec3(-0.4, 0.7, 0.6));
+  float dif = clamp(dot(n, L), 0.0, 1.0);
+  float spe = pow(clamp(dot(reflect(-L, n), vec3(0.0,0.0,1.0)), 0.0, 1.0), 60.0);
+  vec3 L2 = normalize(vec3(0.6, -0.3, 0.7));
+  float spe2 = pow(clamp(dot(reflect(-L2, n), vec3(0.0,0.0,1.0)), 0.0, 1.0), 24.0);
+  float streak = pow(0.5 + 0.5*sin(t*9.0 + x*1.3 + ph + T*0.4), 30.0)*0.35;
+  float fres = pow(1.0 - clamp(n.z, 0.0, 1.0), 3.0);
+  vec3 deep = vec3(0.16, 0.0, 0.02), mid = vec3(0.78, 0.04, 0.11), hi = vec3(0.98, 0.22, 0.28);
+  vec3 c = mix(deep, mid, smoothstep(0.0, 0.7, dif));
+  c = mix(c, hi, smoothstep(0.7, 1.0, dif)*0.55);
+  c += vec3(1.0, 0.88, 0.9)*spe*1.8 + vec3(1.0, 0.45, 0.5)*spe2*0.45 + vec3(1.0, 0.35, 0.45)*fres*0.6 + vec3(1.0,0.6,0.65)*streak*cov;
+  float alpha = cov*(0.55 + 0.45*max(dif, spe));
+  return vec4(c, alpha);
+}
+vec3 over(vec3 dst, vec4 s){ return mix(dst, s.rgb, s.a); }
+void main(){
+  vec2 uv = gl_FragCoord.xy / R; uv.y *= S;
+  vec2 p = vec2(uv.x * R.x / (R.y / S), uv.y);
+  vec3 col = vec3(0.0);
+  col = over(col, ribbon(p, 0.30, 0.050, 1.4, 0.30, 3.0, 0.055));
+  col = over(col, ribbon(p, 0.22, 0.070, 1.1, 0.24, 0.0, 0.090));
+  col = over(col, ribbon(p, 0.12, 0.060, 1.7, 0.36, 2.2, 0.080));
+  col = over(col, ribbon(p, 0.17, 0.075, 0.9, 0.20, 4.6, 0.050));
+  float fade = smoothstep(0.58, 0.30, uv.y);
+  float glow = exp(-pow((uv.y - 0.14)/0.20, 2.0)) * 0.10;
+  col = col*fade + vec3(0.40, 0.0, 0.05)*glow;
+  col = 1.0 - exp(-col*1.35);
+  gl_FragColor = vec4(col, 1.0);
+}`;
+let lgGL = null;
+function lgGLStart(){
+  const cv = $('#lgGL'); if (!cv) return false;
+  if (lgGL){ lgGL.run(); return true; }
+  let gl;
+  try { gl = cv.getContext('webgl', {antialias:false, alpha:false, powerPreference:'high-performance'}); } catch { gl = null; }
+  if (!gl) return false;
+  const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
+  let pr;
+  try { pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, 'attribute vec2 q;void main(){gl_Position=vec4(q,0.,1.);}')); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, LG_GLSL)); gl.linkProgram(pr); if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) throw new Error('link'); }
+  catch { return false; }
+  gl.useProgram(pr);
+  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(pr, 'q'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const uR = gl.getUniformLocation(pr, 'R'), uT = gl.getUniformLocation(pr, 'T'), uS = gl.getUniformLocation(pr, 'S');
+  let raf = 0, t0 = performance.now(), running = false;
+  const size = () => { const dpr = Math.min(1.75, window.devicePixelRatio || 1), w = Math.round(cv.clientWidth * dpr), h = Math.round(cv.clientHeight * dpr); if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); } };
+  const draw = now => { size(); gl.uniform2f(uR, cv.width, cv.height); gl.uniform1f(uT, 6 + (now - t0) / 1000); gl.uniform1f(uS, cv.clientHeight / Math.max(1, innerHeight)); gl.drawArrays(gl.TRIANGLES, 0, 3); };
+  const loop = now => { draw(now); raf = running ? requestAnimationFrame(loop) : 0; };
+  const still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  lgGL = {
+    run(){ if (running) return; if (still){ draw(performance.now()); cv.classList.add('on'); return; } running = true; raf = requestAnimationFrame(loop); cv.classList.add('on'); },
+    stop(){ running = false; cancelAnimationFrame(raf); raf = 0; }
+  };
+  cv.addEventListener('webglcontextlost', e => { e.preventDefault(); lgGL.stop(); cv.classList.remove('on'); lgVideoFallback(); });
+  document.addEventListener('visibilitychange', () => { if (!lgGL) return; if (document.hidden) lgGL.stop(); else if (!$('#login').hidden) lgGL.run(); });
+  lgGL.run();
+  return true;
+}
+function lgVideoStart(){
+  const v = $('#lgVideo');
+  if (lgGLStart()){ if (v){ v.classList.add('off'); try { v.pause(); } catch {} } return; }
+  lgVideoFallback();
+}
 function lgVideoStop(){ const v = $('#lgVideo'); if (v) try { v.pause(); } catch {} }
+const _lgVideoStopOrig = lgVideoStop;
+lgVideoStop = function(){ if (lgGL) lgGL.stop(); _lgVideoStopOrig(); };
 /* a entrada é CSS puro; isto só a aposenta quando termina, para não repetir */
 (() => {
   const root = $('#login'), last = document.querySelector('#login .lg-btn'); if (!root || !last) return;
