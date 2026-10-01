@@ -387,12 +387,21 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 }
 
 
-/* ondas vermelhas do login, atrás do painel: mais fracas e mais lentas */
-.app-gl{position:fixed;left:14px;right:14px;bottom:14px;width:calc(100% - 28px);height:58vh;border-radius:0 0 30px 30px;z-index:0;pointer-events:none;display:block;opacity:0;mix-blend-mode:screen;transition:opacity 1.6s ease;
-  -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 45%);mask-image:linear-gradient(180deg,transparent 0%,#000 45%)}
-.app-gl.on{opacity:.5}
+/* logo ProFood em vidro atrás do painel, com movimento lento */
+.app-logo{position:fixed;inset:14px;z-index:0;pointer-events:none;display:grid;place-items:center;perspective:1400px;overflow:hidden;border-radius:30px}
+.al-float{position:relative;width:min(76vw,1120px);aspect-ratio:1046/383;margin-top:6vh;transform-style:preserve-3d;animation:alFloat 22s ease-in-out infinite alternate}
+.al-edge{position:absolute;inset:0;filter:drop-shadow(0 1.5px 0 rgba(255,255,255,.35)) drop-shadow(0 -1px 0 rgba(255,255,255,.1)) drop-shadow(0 30px 70px rgba(227,50,59,.3))}
+.al-glass,.al-shine{position:absolute;inset:0;-webkit-mask:var(--logo) center/contain no-repeat;mask:var(--logo) center/contain no-repeat}
+.al-glass{background:linear-gradient(140deg,rgba(255,255,255,.26) 0%,rgba(255,255,255,.08) 38%,rgba(227,50,59,.22) 62%,rgba(255,255,255,.14) 100%);-webkit-backdrop-filter:blur(8px) saturate(1.3);backdrop-filter:blur(8px) saturate(1.3)}
+.al-shine{background:linear-gradient(105deg,transparent 0 40%,rgba(255,255,255,.5) 48%,rgba(255,220,224,.2) 52%,transparent 60% 100%) 0 0/260% 100% no-repeat;animation:alShine 9s ease-in-out infinite;mix-blend-mode:screen}
+@keyframes alFloat{
+  0%{transform:translate3d(-1.2%,0,0) rotateX(6deg) rotateY(-9deg)}
+  50%{transform:translate3d(.6%,-1.6%,0) rotateX(-3deg) rotateY(4deg)}
+  100%{transform:translate3d(1.4%,.8%,0) rotateX(4deg) rotateY(10deg)}}
+@keyframes alShine{0%,55%{background-position:120% 0}85%,100%{background-position:-20% 0}}
 #appRoot>main{position:relative;z-index:1}
-@media (max-width:980px){.app-gl{left:8px;right:8px;bottom:8px;width:calc(100% - 16px);border-radius:0 0 24px 24px;height:45vh}}
+@media (max-width:980px){.app-logo{inset:8px;border-radius:24px}.al-float{width:110vw;margin-top:20vh}}
+@media (prefers-reduced-motion:reduce){.al-float,.al-shine{animation:none}}
 
 /* ---------- uma sequência de entrada, só na primeira exibição ---------- */
 @keyframes wIn{from{opacity:0;translate:0 12px}}
@@ -534,7 +543,7 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 </div>
 
 <div id="appRoot" hidden>
-<canvas class="app-gl" id="appGL" aria-hidden="true"></canvas>
+<div class="app-logo" aria-hidden="true"><div class="al-float"><div class="al-edge"><span class="al-glass"></span></div><span class="al-shine"></span></div></div>
 <header class="top">
   <div class="in">
     <div class="rail-mark" aria-hidden="true"><span class="plogo"></span></div>
@@ -2694,34 +2703,6 @@ function lgGLStart(){
   return true;
 }
 
-/* fundo animado do painel: o mesmo shader do login, a ~30 quadros por segundo e mais lento */
-let appGL = null;
-function appGLStart(){
-  if (appGL){ appGL.run(); return; }
-  const cv = $('#appGL'); if (!cv) return;
-  let gl; try { gl = cv.getContext('webgl', {antialias:false, alpha:false, powerPreference:'low-power'}); } catch { gl = null; }
-  if (!gl) return;
-  const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
-  let pr;
-  try { pr = gl.createProgram(); gl.attachShader(pr, sh(gl.VERTEX_SHADER, 'attribute vec2 q;void main(){gl_Position=vec4(q,0.,1.);}')); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, LG_GLSL)); gl.linkProgram(pr); if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) throw new Error('link'); }
-  catch { return; }
-  gl.useProgram(pr);
-  const buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
-  const loc = gl.getAttribLocation(pr, 'q'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-  const uR = gl.getUniformLocation(pr, 'R'), uT = gl.getUniformLocation(pr, 'T'), uS = gl.getUniformLocation(pr, 'S');
-  let raf = 0, last = 0, running = false; const t0 = performance.now();
-  const size = () => { const dpr = Math.min(1.25, window.devicePixelRatio || 1), w = Math.round(cv.clientWidth * dpr), h = Math.round(cv.clientHeight * dpr); if (cv.width !== w || cv.height !== h){ cv.width = w; cv.height = h; gl.viewport(0, 0, w, h); } };
-  const draw = now => { size(); gl.uniform2f(uR, cv.width, cv.height); gl.uniform1f(uT, 20 + (now - t0) / 1000 * 0.55); gl.uniform1f(uS, cv.clientHeight / Math.max(1, innerHeight)); gl.drawArrays(gl.TRIANGLES, 0, 3); };
-  const loop = now => { if (now - last > 33){ last = now; draw(now); } raf = running ? requestAnimationFrame(loop) : 0; };
-  appGL = {
-    run(){ if (running) return; draw(performance.now()); cv.classList.add('on'); if (RM.matches) return; running = true; raf = requestAnimationFrame(loop); },
-    stop(){ running = false; cancelAnimationFrame(raf); raf = 0; }
-  };
-  addEventListener('resize', () => { if (appGL && !running) draw(performance.now()); }, {passive:true});
-  cv.addEventListener('webglcontextlost', e => { e.preventDefault(); appGL.stop(); cv.classList.remove('on'); });
-  document.addEventListener('visibilitychange', () => { if (!appGL || $('#appRoot').hidden) return; document.hidden ? appGL.stop() : appGL.run(); });
-  appGL.run();
-}
 function lgVideoStart(){
   const v = $('#lgVideo');
   if (lgGLStart()){ if (v){ v.classList.add('off'); try { v.pause(); } catch {} } return; }
@@ -2770,7 +2751,7 @@ function showLogin(mode){
   if (!off) setTimeout(() => $(setup ? '#lgName' : '#lgUser').focus(), 50);
 }
 function enterApp(u){
-  ME = u; $('#login').hidden = true; $('#appRoot').hidden = false; lgVideoStop(); try { if (lgGL) lgGL.stop(); } catch {} setTimeout(appGLStart, 400);
+  ME = u; $('#login').hidden = true; $('#appRoot').hidden = false; lgVideoStop(); try { if (lgGL) lgGL.stop(); } catch {}
   $('#meName').textContent = u.name || u.u; $('#meRole').textContent = {admin:'Administrador', editor:'Editor', leitor:'Somente leitura'}[u.role] || '';
   $('#btnImport').hidden = !canAdmin || u.role === 'leitor'; $('#meAv').textContent = (u.name || u.u).slice(0, 1);
   lgMsg(''); $('#lgPass').value = '';
