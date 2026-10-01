@@ -140,6 +140,7 @@ section.tab{display:flex;flex-direction:column;gap:18px}
 .ov .g-kpi,.ov .g-line{grid-column:span 6}
 .ov .g-bars{grid-column:span 7}
 .ov .g-list{grid-column:span 5}
+.ov .g-all{grid-column:1/-1}
 @media (max-width:1180px){.ov>*{grid-column:1/-1!important}}
 .g-kpi{padding:14px}
 .grip{position:absolute;top:7px;left:50%;translate:-50% 0;width:44px;height:4px;border-radius:2px;background:rgba(200,215,255,.22)}
@@ -581,6 +582,11 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
       <div class="glass g-list" style="--i:3">
         <div class="gh"><span class="gi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span><h2>Mais urgentes</h2><button class="more" type="button" id="seeAll">Ver todos</button></div>
         <ul class="urg" id="actList"></ul>
+      </div>
+      <div class="glass g-all" style="--i:4;padding:0">
+        <div class="gh" style="padding:18px 20px 0;flex-wrap:wrap"><span class="gi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></span><div><h2>Todos os produtos da planilha</h2><p class="gs" id="allSub"></p></div><button class="pill" type="button" id="allExp">Exportar <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
+        <div class="seg" id="allSeg" style="padding:12px 20px 14px"></div>
+        <div class="tbl cards" id="tAll" style="max-height:720px"></div>
       </div>
     </div>
   </section>
@@ -1999,6 +2005,7 @@ const COLS = {
   cov:{h:'Cobertura', v:it => it.dias ?? (it.disp < 0 ? -1e9 + it.disp : 1e9), c:'c-cov', r:(it, i) => ruler(it, i)},
   dias:{h:'Cobertura', v:it => it.dias ?? (it.disp < 0 ? -1e9 + it.disp : 1e9), c:'c-cov', r:(it, i) => ruler(it, i)},
   disp:{h:'Disponível', n:1, v:it => it.disp ?? -1e12, c:'c-num', r:it => `<span class="${it.disp < 0 ? 'neg' : ''}" style="font-weight:600">${fmt(it.disp)}</span>`},
+  media:{h:'Média/mês', n:1, v:it => it.media ?? -1, c:'c-num', r:it => fmt(it.media)},
   est:{h:'Estoque', n:1, v:it => it.est ?? -1e12, c:'c-num', r:it => fmt(it.est)},
   emp:{h:'Empenhado', n:1, v:it => it.emp ?? -1e12, c:'c-num', r:it => fmt(it.emp)},
   osc:{h:'O.S. e etapa', v:it => it.os ? 'b' + it.os : (it.st === 'Crítico' ? 'a' : 'c'), c:'c-os', r:it => osCell(it)},
@@ -2208,6 +2215,16 @@ function rResumo(fl){
       return `<li data-cod="${esc(it.cod)}" tabindex="0" class="${i === 0 ? 'first' : ''}" style="--i:${i}"><span class="av" style="background:${COLOR[it.st]}">${esc(initials(it.fr))}</span><span style="min-width:0"><span class="t">${esc(short(it.desc))}</span><span class="role">${esc(it.cod)} · ${esc(it.fr)}${it.os ? ' · O.S. ' + esc(it.os) : ' · sem O.S.'}</span></span><span class="val crit">${it.dias == null ? 'em falta' : fmt(it.dias) + ' dias'}<small>${it.disp < 0 ? 'falta ' + fmt(-it.disp) + ' cx' : esc(c.t)}</small></span><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span></li>`; }).join('');
     al.querySelectorAll('li[data-cod]').forEach(li => { li.onclick = () => openItem(li.dataset.cod); li.onkeydown = e => { if (e.key === 'Enter') openItem(li.dataset.cod); }; });
   }
+  // todos os produtos
+  const aopts = [['', 'Todos'], ['Crítico', 'Críticos'], ['Atenção', 'Atenção'], ['Seguro', 'Seguros'], ['Sem consumo', 'Sem consumo']];
+  const ak = [...F.st][0] || '';
+  const inSt = (i, k) => !k || i.st === k || (k === 'Sem consumo' && i.st === 'Sem dados');
+  $('#allSeg').innerHTML = aopts.map(([k, l]) => `<button type="button" data-k="${k}" aria-pressed="${ak === k}">${k ? `<i style="background:${COLOR[k]}"></i>` : ''}${l} <b>${fmt(count(fl, i => inSt(i, k)))}</b></button>`).join('');
+  $('#allSeg').querySelectorAll('button').forEach(b => b.onclick = () => { F.st = b.dataset.k ? new Set([b.dataset.k]) : new Set(); render(); });
+  const allRows = fl.filter(i => inSt(i, ak));
+  $('#allSub').textContent = `${plural(allRows.length, 'produto', 'produtos')} · posição de ${brDate(snaps.at(-1).date)} · clique no título da coluna para ordenar`;
+  table('tAll', allRows, ['mat','cov','media','est','emp','disp','osc','prz'], ['cov','asc']);
+  $('#allExp').onclick = () => $('#expEstoque').click();
   $('#seeAll').textContent = cr.length > 7 ? `Ver os ${fmt(cr.length)}` : 'Ver no estoque';
 }
 function colLabel(s){ const p = String(s).split(' '); const w = p[0].length <= 3 && p[1] ? p[1] : p[0]; return w.length > 7 ? w.slice(0, 6) + '…' : w; }
