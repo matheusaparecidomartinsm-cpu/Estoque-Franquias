@@ -432,6 +432,71 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 @media (max-width:760px){.frh{grid-template-columns:32px minmax(0,1fr) 28px;gap:10px}.frh .fc{grid-column:2;grid-row:2}.frh .fb{display:none}.frh .chv{grid-column:3;grid-row:1}.frl{padding:0 8px 8px}}
 @media (prefers-reduced-motion:no-preference){.play .frg{animation:wIn .5s var(--out) calc(.3s + var(--i)*40ms) backwards}}
 
+
+/* catálogo de produtos */
+.pb{display:grid;grid-template-columns:270px minmax(0,1fr);gap:16px;align-items:start}
+.pb-side{position:sticky;top:84px;display:flex;flex-direction:column;gap:4px;max-height:calc(100vh - 110px);overflow:auto;padding:6px;border-radius:18px;border:1px solid var(--line);background:rgba(12,11,12,.7);scrollbar-width:thin}
+.pb-fr{display:grid;grid-template-columns:32px minmax(0,1fr) auto;grid-template-rows:auto auto;gap:2px 10px;align-items:center;padding:9px 10px;border:1px solid transparent;border-radius:13px;background:none;color:var(--ink);cursor:pointer;text-align:left;transition:background-color .15s,border-color .15s}
+.pb-fr:hover{background:var(--hover)}
+.pb-fr.on{background:rgba(227,50,59,.12);border-color:rgba(255,107,114,.4)}
+.pb-fr .av{grid-row:1/3;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font:700 11px var(--display);color:#0B0B0C}
+.pb-fr .nm{display:flex;flex-direction:column;min-width:0}
+.pb-fr .nm b{font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pb-fr .nm span{font-size:11.5px;color:var(--muted)}
+.pb-fr .ct{font:600 13px var(--display);color:var(--muted);min-width:26px;text-align:center;padding:2px 7px;border-radius:10px;background:var(--none-soft)}
+.pb-fr .ct.crit{color:#fff;background:var(--c-crit)}
+.pb-fr .br{grid-column:2/4;display:flex;gap:2px;height:4px;border-radius:2px;overflow:hidden;margin-top:5px}
+.pb-fr .br i{display:block;height:100%}
+.pb-main{min-width:0}
+.pb-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:4px 2px 12px}
+.pb-t h3{font-size:24px;line-height:1.15}
+.pb-t p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+.pb-t b.c{color:var(--crit)} .pb-t b.w{color:var(--warn)}
+.pb-sort{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.pb-sort .sel{height:36px}
+.pb-dist{display:flex;gap:3px;height:10px;border-radius:5px;overflow:hidden;margin-bottom:16px}
+.pb-dist i{display:block;height:100%;transform-origin:left}
+.pb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.pc{position:relative;display:flex;flex-direction:column;gap:9px;padding:14px 15px 13px 18px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0) 60%),rgba(16,15,16,.88);color:var(--ink);text-align:left;cursor:pointer;overflow:hidden;transition:border-color .2s var(--out),transform .2s var(--out),box-shadow .2s var(--out)}
+.pc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--sc,var(--c-none))}
+.pc.crit{--sc:var(--c-crit);background:linear-gradient(180deg,rgba(255,84,104,.09),rgba(255,84,104,0) 45%),rgba(16,15,16,.9)}
+.pc.warn{--sc:var(--c-warn)} .pc.ok{--sc:var(--c-ok)} .pc.none{--sc:var(--c-none)}
+.pc:hover{border-color:rgba(240,200,205,.3);transform:translateY(-2px);box-shadow:0 18px 34px -20px rgba(0,0,0,.9)}
+.pc-flag{position:absolute;top:0;right:0;padding:4px 10px 4px 14px;border-bottom-left-radius:12px;font-size:11.5px;font-weight:700;color:#fff;background:repeating-linear-gradient(135deg,#E3323B 0 6px,#C21F2A 6px 12px)}
+.pc-top{display:flex;align-items:center;gap:8px;font-size:12px}
+.pc-st{font-weight:600;color:var(--sc)}
+.pc.ok .pc-st{color:var(--ok)} .pc.none .pc-st{color:var(--muted)}
+.pc-code{color:var(--faint)}
+.pc-name{font-weight:600;font-size:13.5px;line-height:1.35;min-height:2.7em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pc-cov{display:flex;align-items:baseline;gap:6px}
+.pc-cov b{font:600 30px/1 var(--display);letter-spacing:-.02em}
+.pc-cov b.t{font-size:20px}
+.pc-cov small{font-size:13px;color:var(--muted)}
+.pc.crit .pc-cov b{color:var(--crit)} .pc.warn .pc-cov b{color:var(--warn)} .pc.none .pc-cov b{color:var(--muted)}
+.pc .rl{min-width:0}
+.pc-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:9px 0 2px;border-top:1px solid var(--line-soft)}
+.pc-nums span{display:flex;flex-direction:column}
+.pc-nums small{font-size:11px;color:var(--faint)}
+.pc-nums b{font:600 15px var(--display)}
+.pc-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:32px;padding-top:9px;border-top:1px solid var(--line-soft)}
+.pc-os{display:flex;flex-direction:column;line-height:1.25;min-width:0}
+.pc-os b{font-size:13px}
+.pc-os span{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pz{font-size:12px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){
+  .pb-main.swap .pc,.play .pc{animation:wIn .45s var(--out) calc(var(--i)*28ms) backwards}
+  .pb-main.swap .pb-dist i,.play .pb-dist i{animation:growX .7s var(--out) calc(var(--i)*.1s) backwards}
+  .pb-main.swap .rt .f{animation:growX .7s var(--out) calc(.15s + var(--i,0)*28ms) backwards}
+}
+@media (max-width:980px){
+  .pb{grid-template-columns:minmax(0,1fr)}
+  .pb-side{position:static;flex-direction:row;max-height:none;overflow-x:auto;padding:5px}
+  .pb-fr{flex:none;width:200px}
+}
+@media (max-width:520px){.pb-grid{grid-template-columns:minmax(0,1fr)}.pb-t h3{font-size:20px}}
+.controls{min-width:0;max-width:100%}
+@media (max-width:760px){.controls .right{margin-left:0;flex-wrap:wrap}.controls .right .sel{flex:1 1 170px;min-width:160px}.block-h{padding-inline:14px}}
+
 /* ---------- uma sequência de entrada, só na primeira exibição ---------- */
 @keyframes wIn{from{opacity:0;translate:0 12px}}
 @keyframes growX{from{scale:0 1}}
@@ -632,24 +697,24 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
       </div>
       <div class="glass g-all" style="--i:4;padding:0">
         <div class="gh" style="padding:18px 20px 0;flex-wrap:wrap"><span class="gi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></span><div><h2>Produtos por franquia</h2><p class="gs" id="allSub"></p></div><button class="pill" type="button" id="allExp">Exportar <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
-        <div class="frl-bar"><div class="seg" id="allSeg"></div><button class="btn sm" type="button" id="allToggle">Abrir todas</button></div>
-        <div class="frl" id="tAll"></div>
+        <div class="frl-bar"><div class="seg" id="allSeg"></div></div>
+        <div id="tAll" style="padding:0 14px 14px"></div>
       </div>
     </div>
   </section>
 
   <!-- ESTOQUE -->
   <section class="tab" id="tab-estoque" hidden>
-    <div class="head"><h1>Estoque</h1><p>Os produtos de cada franquia, da que tem mais críticos para a que tem menos. Abra uma franquia para ver os produtos dela e clique num produto para registrar O.S., etapa e prazo.</p></div>
+    <div class="head"><h1>Estoque</h1><p>Escolha uma franquia para ver os produtos dela. Clique num produto para registrar O.S., etapa e prazo.</p></div>
     <div class="block">
       <div class="block-h" style="padding-bottom:14px">
         <div class="controls" style="flex:1">
           <div class="seg" id="segStatus"></div>
-          <div class="right"><div class="vsw" role="group" aria-label="Forma de listar"><button type="button" data-v="fr" aria-pressed="true">Por franquia</button><button type="button" data-v="lista" aria-pressed="false">Lista</button></div><select class="sel" id="fCat" aria-label="Categoria"><option value="">Todas as categorias</option></select><button class="btn sm" id="expEstoque" type="button">Exportar</button></div>
+          <div class="right"><div class="vsw" role="group" aria-label="Forma de listar"><button type="button" data-v="fr" aria-pressed="true">Cartões por franquia</button><button type="button" data-v="lista" aria-pressed="false">Tabela</button></div><select class="sel" id="fCat" aria-label="Categoria"><option value="">Todas as categorias</option></select><button class="btn sm" id="expEstoque" type="button">Exportar</button></div>
         </div>
       </div>
-      <div class="frl-bar" id="estBar" style="padding-top:0"><span class="note" id="estSub"></span><button class="btn sm" type="button" id="estToggle">Abrir todas</button></div>
-      <div class="frl" id="estGroups"></div>
+      <div class="frl-bar" id="estBar" style="padding-top:0"><span class="note" id="estSub"></span></div>
+      <div id="estGroups"></div>
       <div class="tbl cards" id="tEstoque"></div>
     </div>
   </section>
@@ -2271,7 +2336,7 @@ function rResumo(fl){
   $('#allSeg').innerHTML = aopts.map(([k, l]) => `<button type="button" data-k="${k}" aria-pressed="${ak === k}">${k ? `<i style="background:${COLOR[k]}"></i>` : ''}${l} <b>${fmt(count(fl, i => inSt(i, k)))}</b></button>`).join('');
   $('#allSeg').querySelectorAll('button').forEach(b => b.onclick = () => { F.st = b.dataset.k ? new Set([b.dataset.k]) : new Set(); render(); });
   const allRows = fl.filter(i => inSt(i, ak));
-  frGroups(allRows);
+  prodBrowser($('#tAll'), allRows, 'ov', $('#allSub'));
   $('#allExp').onclick = () => $('#expEstoque').click();
   $('#seeAll').textContent = cr.length > 7 ? `Ver os ${fmt(cr.length)}` : 'Ver no estoque';
 }
@@ -2304,6 +2369,62 @@ function frGroups(rows, o = {}){
   g.forEach(x => { if (openFr.has(x.k)) table(frId(x.k, pre), x.a, cols, ['cov','asc']); });
   el.querySelectorAll('.frh').forEach(b => b.onclick = () => { const k = b.dataset.k; openFr.has(k) ? openFr.delete(k) : openFr.add(k); render();
     const h = el.querySelector(`.frh[data-k="${CSS.escape(k)}"]`); if (h) h.focus({preventScroll:true}); });
+}
+/* ---------- catálogo de produtos: franquias à esquerda, cartões à direita ---------- */
+const SELFR = {}, SORTP = {};
+const PSORT = {
+  acaba:['Acaba primeiro', (a, b) => (a.dias ?? (a.disp < 0 ? -1e9 : 1e9)) - (b.dias ?? (b.disp < 0 ? -1e9 : 1e9))],
+  semos:['Sem O.S. primeiro', (a, b) => (!!a.os - !!b.os) || ((a.dias ?? 1e9) - (b.dias ?? 1e9))],
+  disp:['Menor disponível', (a, b) => (a.disp ?? 1e12) - (b.disp ?? 1e12)],
+  nome:['Nome', (a, b) => short(a.desc).localeCompare(short(b.desc), 'pt-BR')]};
+const STC = {'Crítico':'crit', 'Atenção':'warn', 'Seguro':'ok', 'Sem consumo':'none', 'Sem dados':'none'};
+function pcard(it, i){
+  const c = STC[it.st] || 'none', short_ = it.disp != null && it.disp < 0;
+  const cov = it.dias == null ? `<b class="t">${short_ ? 'em falta' : it.st === 'Sem dados' ? 'sem dados' : 'sem consumo'}</b>` : `<b>${fmt(it.dias)}</b><small>${Math.abs(it.dias) === 1 ? 'dia' : 'dias'}</small>`;
+  const prz = !it.os ? '' : it.stOS === 'Concluída' ? '<span class="tag done">concluída</span>' : it.dPrazo == null ? '<span class="pz">sem prazo</span>' : `<span class="tag ${({'Prazo vencido':'late', 'Próximo do vencimento':'soon', 'Dentro do prazo':'fine'})[it.stOS] || 'os'}">${prazoLabel(it)}</span>`;
+  return `<button type="button" class="pc ${c}" data-cod="${esc(it.cod)}" style="--i:${Math.min(i, 18)}">
+    ${short_ ? `<span class="pc-flag">falta ${fmt(-it.disp)} cx</span>` : ''}
+    <span class="pc-top"><span class="pc-st">${esc(it.st === 'Sem dados' ? 'Sem consumo' : it.st)}</span><span class="pc-code">${esc(it.cod)}</span></span>
+    <span class="pc-name">${esc(short(it.desc))}</span>
+    <span class="pc-cov">${cov}</span>
+    ${ruler(it, Math.min(i, 18), true).replace(/<span class="rv">.*?<\/span><span class="rt/, '<span class="rt')}
+    <span class="pc-nums"><span><small>Estoque</small><b>${fmt(it.est)}</b></span><span><small>Empenhado</small><b>${fmt(it.emp)}</b></span><span><small>Disponível</small><b class="${short_ ? 'neg' : ''}">${fmt(it.disp)}</b></span></span>
+    <span class="pc-foot">${it.os ? `<span class="pc-os"><b>O.S. ${esc(it.os)}</b><span>${it.mov ? esc(it.mov) : 'etapa não informada'}</span></span>${prz}` : it.st === 'Crítico' ? '<span class="tag miss">Sem O.S.</span><span class="pz">abrir ordem</span>' : '<span class="pz">sem O.S.</span>'}</span>
+  </button>`;
+}
+function prodBrowser(el, rows, pre, subEl){
+  if (!rows.length){ emptyBox(el, 'Nada por aqui', 'Nenhum produto com os filtros escolhidos. Use Limpar no topo para ver tudo.'); if (subEl) subEl.textContent = ''; return; }
+  const g = groupBy(rows, i => i.fr).map(([k, a]) => ({k, a, cr:count(a, i => i.st === 'Crítico'), wa:count(a, i => i.st === 'Atenção'), ok:count(a, i => i.st === 'Seguro'), sc:count(a, i => i.st === 'Sem consumo' || i.st === 'Sem dados'), so:count(a, i => i.st === 'Crítico' && !i.os)}))
+    .sort((x, y) => y.cr - x.cr || y.wa - x.wa || x.k.localeCompare(y.k, 'pt-BR'));
+  const all = {k:'', a:rows, cr:count(rows, i => i.st === 'Crítico'), wa:count(rows, i => i.st === 'Atenção'), ok:count(rows, i => i.st === 'Seguro'), sc:count(rows, i => i.st === 'Sem consumo' || i.st === 'Sem dados'), so:count(rows, i => i.st === 'Crítico' && !i.os)};
+  if (SELFR[pre] === undefined || (SELFR[pre] && !g.some(x => x.k === SELFR[pre]))) SELFR[pre] = g[0].k;
+  const sel = SELFR[pre] === '' ? all : g.find(x => x.k === SELFR[pre]);
+  const sk = SORTP[pre] || 'acaba';
+  const dist = x => [['Crítico', x.cr], ['Atenção', x.wa], ['Seguro', x.ok], ['Sem consumo', x.sc]].filter(p => p[1]);
+  const side = [all, ...g].map(x => { const on = x === sel, nm = x.k || 'Todas as franquias';
+    return `<button type="button" class="pb-fr ${on ? 'on' : ''}" data-k="${esc(x.k)}" aria-pressed="${on}">
+      <span class="av" style="background:${x.k ? (x.cr ? COLOR['Crítico'] : x.wa ? COLOR['Atenção'] : COLOR['Seguro']) : '#F2EEEF'}">${x.k ? esc(initials(x.k)) : '∑'}</span>
+      <span class="nm"><b>${esc(nm)}</b><span>${plural(x.a.length, 'produto', 'produtos')}</span></span>
+      <span class="ct ${x.cr ? 'crit' : ''}" title="${plural(x.cr, 'crítico', 'críticos')}">${x.cr ? fmt(x.cr) : '✓'}</span>
+      <span class="br">${dist(x).map(([k, v]) => `<i style="flex:${v};background:${COLOR[k]}"></i>`).join('')}</span></button>`; }).join('');
+  const list = sel.a.slice().sort(PSORT[sk][1]);
+  el.innerHTML = `<div class="pb">
+    <aside class="pb-side" aria-label="Franquias">${side}</aside>
+    <div class="pb-main">
+      <header class="pb-head">
+        <div class="pb-t"><h3>${esc(sel.k || 'Todas as franquias')}</h3>
+          <p>${plural(sel.a.length, 'produto', 'produtos')}${sel.cr ? ` · <b class="c">${plural(sel.cr, 'crítico', 'críticos')}</b>` : ''}${sel.wa ? ` · <b class="w">${fmt(sel.wa)} em atenção</b>` : ''}${sel.so ? ` · ${plural(sel.so, 'crítico sem O.S.', 'críticos sem O.S.')}` : ''}</p></div>
+        <label class="pb-sort">Ordenar <select class="sel" data-sort>${Object.entries(PSORT).map(([k, [l]]) => `<option value="${k}" ${k === sk ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+      </header>
+      <div class="pb-dist">${dist(sel).map(([k, v], i) => `<i style="flex:${v};background:${COLOR[k]};--i:${i}" data-tip="<b>${esc(k)}</b>: ${plural(v, 'produto', 'produtos')}"></i>`).join('')}</div>
+      <div class="pb-grid">${list.map(pcard).join('')}</div>
+    </div></div>`;
+  if (subEl) subEl.textContent = `${plural(g.length, 'franquia', 'franquias')} · ${plural(rows.length, 'produto', 'produtos')}`;
+  const anim = () => { const m = el.querySelector('.pb-main'); m.classList.remove('swap'); void m.offsetWidth; m.classList.add('swap'); };
+  el.querySelectorAll('.pb-fr').forEach(b => b.onclick = () => { SELFR[pre] = b.dataset.k; render(); anim(); const n = el.querySelector(`.pb-fr[data-k="${CSS.escape(b.dataset.k)}"]`); if (n) n.focus({preventScroll:true});
+    const top = el.querySelector('.pb-main').getBoundingClientRect().top; if (top < 70 || top > innerHeight) el.querySelector('.pb-main').scrollIntoView({block:'start', behavior: RM.matches ? 'auto' : 'smooth'}); });
+  el.querySelector('[data-sort]').onchange = e => { SORTP[pre] = e.target.value; render(); anim(); };
+  el.querySelectorAll('.pc').forEach(c => c.onclick = () => openItem(c.dataset.cod));
 }
 function colLabel(s){ const p = String(s).split(' '); const w = p[0].length <= 3 && p[1] ? p[1] : p[0]; return w.length > 7 ? w.slice(0, 6) + '…' : w; }
 function initials(s){ const w = String(s).replace(/\b(do|da|de|dos|das|e)\b/gi, '').split(/\s+/).filter(Boolean); return ((w[0] || '?')[0] + ((w[1] || '')[0] || '')).toUpperCase(); }
@@ -2448,7 +2569,7 @@ function rEstoque(fl){
   const byFr = EST_VIEW === 'fr';
   document.querySelectorAll('#tab-estoque .vsw button').forEach(b => { b.setAttribute('aria-pressed', b.dataset.v === EST_VIEW); b.onclick = () => { EST_VIEW = b.dataset.v; render(); }; });
   $('#estBar').hidden = !byFr; $('#estGroups').hidden = !byFr; $('#tEstoque').hidden = byFr;
-  if (byFr) frGroups(rows, {el:'#estGroups', sub:'#estSub', toggle:'#estToggle', pre:'est-', cols:['mat','cov','disp','est','emp','osc','prz']});
+  if (byFr) prodBrowser($('#estGroups'), rows, 'est', $('#estSub'));
   else table('tEstoque', rows, ['mat','cov','disp','est','emp','osc','prz'], ['cov','asc']);
 }
 let EST_VIEW = 'fr';
