@@ -8,7 +8,7 @@
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js" as="script">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Outfit:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&family=Sora:wght@100..800&family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Barlow+Condensed:wght@500;600;700&family=Outfit:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Barlow:wght@300;400;500;600&family=Sora:wght@100..800&family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap">
 <style>
 /* Controle de estoque · paleta da tela de login: preto, vermelho ProFood e branco.
    Moldura azul com brilho, painel escuro arredondado, trilho de ícones flutuante, cartões de vidro,
@@ -433,67 +433,76 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 @media (prefers-reduced-motion:no-preference){.play .frg{animation:wIn .5s var(--out) calc(.3s + var(--i)*40ms) backwards}}
 
 
-/* catálogo de produtos */
-.pb{display:grid;grid-template-columns:270px minmax(0,1fr);gap:16px;align-items:start}
-.pb-side{position:sticky;top:84px;display:flex;flex-direction:column;gap:4px;max-height:calc(100vh - 110px);overflow:auto;padding:6px;border-radius:18px;border:1px solid var(--line);background:rgba(12,11,12,.7);scrollbar-width:thin}
-.pb-fr{display:grid;grid-template-columns:32px minmax(0,1fr) auto;grid-template-rows:auto auto;gap:2px 10px;align-items:center;padding:9px 10px;border:1px solid transparent;border-radius:13px;background:none;color:var(--ink);cursor:pointer;text-align:left;transition:background-color .15s,border-color .15s}
-.pb-fr:hover{background:var(--hover)}
-.pb-fr.on{background:rgba(227,50,59,.12);border-color:rgba(255,107,114,.4)}
-.pb-fr .av{grid-row:1/3;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font:700 11px var(--display);color:#0B0B0C}
-.pb-fr .nm{display:flex;flex-direction:column;min-width:0}
-.pb-fr .nm b{font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pb-fr .nm span{font-size:11.5px;color:var(--muted)}
-.pb-fr .ct{font:600 13px var(--display);color:var(--muted);min-width:26px;text-align:center;padding:2px 7px;border-radius:10px;background:var(--none-soft)}
-.pb-fr .ct.crit{color:#fff;background:var(--c-crit)}
-.pb-fr .br{grid-column:2/4;display:flex;gap:2px;height:4px;border-radius:2px;overflow:hidden;margin-top:5px}
-.pb-fr .br i{display:block;height:100%}
-.pb-main{min-width:0}
-.pb-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:4px 2px 12px}
-.pb-t h3{font-size:24px;line-height:1.15}
-.pb-t p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
-.pb-t b.c{color:var(--crit)} .pb-t b.w{color:var(--warn)}
-.pb-sort{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
-.pb-sort .sel{height:36px}
-.pb-dist{display:flex;gap:3px;height:10px;border-radius:5px;overflow:hidden;margin-bottom:16px}
-.pb-dist i{display:block;height:100%;transform-origin:left}
-.pb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
-.pc{position:relative;display:flex;flex-direction:column;gap:9px;padding:14px 15px 13px 18px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0) 60%),rgba(16,15,16,.88);color:var(--ink);text-align:left;cursor:pointer;overflow:hidden;transition:border-color .2s var(--out),transform .2s var(--out),box-shadow .2s var(--out)}
-.pc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--sc,var(--c-none))}
-.pc.crit{--sc:var(--c-crit);background:linear-gradient(180deg,rgba(255,84,104,.09),rgba(255,84,104,0) 45%),rgba(16,15,16,.9)}
-.pc.warn{--sc:var(--c-warn)} .pc.ok{--sc:var(--c-ok)} .pc.none{--sc:var(--c-none)}
-.pc:hover{border-color:rgba(240,200,205,.3);transform:translateY(-2px);box-shadow:0 18px 34px -20px rgba(0,0,0,.9)}
-.pc-flag{position:absolute;top:0;right:0;padding:4px 10px 4px 14px;border-bottom-left-radius:12px;font-size:11.5px;font-weight:700;color:#fff;background:repeating-linear-gradient(135deg,#E3323B 0 6px,#C21F2A 6px 12px)}
-.pc-top{display:flex;align-items:center;gap:8px;font-size:12px}
-.pc-st{font-weight:600;color:var(--sc)}
-.pc.ok .pc-st{color:var(--ok)} .pc.none .pc-st{color:var(--muted)}
-.pc-code{color:var(--faint)}
-.pc-name{font-weight:600;font-size:13.5px;line-height:1.35;min-height:2.7em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.pc-cov{display:flex;align-items:baseline;gap:6px}
-.pc-cov b{font:600 30px/1 var(--display);letter-spacing:-.02em}
-.pc-cov b.t{font-size:20px}
-.pc-cov small{font-size:13px;color:var(--muted)}
-.pc.crit .pc-cov b{color:var(--crit)} .pc.warn .pc-cov b{color:var(--warn)} .pc.none .pc-cov b{color:var(--muted)}
-.pc .rl{min-width:0}
-.pc-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:9px 0 2px;border-top:1px solid var(--line-soft)}
-.pc-nums span{display:flex;flex-direction:column}
-.pc-nums small{font-size:11px;color:var(--faint)}
-.pc-nums b{font:600 15px var(--display)}
-.pc-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:32px;padding-top:9px;border-top:1px solid var(--line-soft)}
-.pc-os{display:flex;flex-direction:column;line-height:1.25;min-width:0}
-.pc-os b{font-size:13px}
-.pc-os span{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pz{font-size:12px;color:var(--muted)}
+/* produtos: etiquetas de caixa sobre papelão kraft */
+.kr{--kraft:#B98D5E;--kraft-2:#A87B4D;--kraft-d:#7A5530;--label:#FBFAF7;--ink-p:#1A1A1A;--mut-p:#5F5A55;--rule:#DCD6CC;
+  --p-crit:#D7263D;--p-warn:#E09B12;--p-ok:#1E8A6E;--p-none:#8B8F94;--cond:"Barlow Condensed","Archivo Narrow",system-ui,sans-serif}
+.ftabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:0 6px;position:relative;z-index:1}
+.ftabs::-webkit-scrollbar{display:none}
+.ft{flex:none;display:flex;align-items:center;gap:7px;height:40px;padding:0 16px;margin-top:6px;border:0;border-radius:12px 12px 0 0;background:#5B4229;color:#F1E4D2;font:600 15px var(--cond);letter-spacing:.01em;cursor:pointer;transition:background-color .15s,margin .15s,height .15s}
+.ft:hover{background:#6E5034}
+.ft.on{background:var(--kraft);color:var(--ink-p);height:46px;margin-top:0}
+.ft .n{min-width:22px;height:20px;padding:0 6px;border-radius:10px;display:grid;place-items:center;background:var(--p-crit);color:#fff;font:700 12.5px var(--cond)}
+.board{position:relative;border-radius:0 18px 18px 18px;padding:20px 20px 24px;color:var(--ink-p);
+  background:
+    repeating-linear-gradient(90deg,rgba(0,0,0,.035) 0 2px,transparent 2px 9px),
+    radial-gradient(120% 80% at 20% 0%,rgba(255,236,205,.25),transparent 60%),
+    linear-gradient(180deg,var(--kraft),var(--kraft-2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),inset 0 -30px 60px -40px rgba(60,35,10,.5)}
+.bd-h{display:flex;align-items:flex-end;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;margin-bottom:18px}
+.bd-h h3{font:700 34px/1 var(--cond);letter-spacing:-.005em;color:#2A1C0E}
+.bd-c{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.bd-c span{display:inline-flex;align-items:baseline;gap:5px;padding:3px 10px;border-radius:6px;background:rgba(251,250,247,.55);font-size:13px;color:#3B2A18}
+.bd-c b{font:700 16px var(--cond)}
+.bd-c .kc-crit{background:var(--p-crit);color:#fff}
+.bd-c .kc-warn{background:var(--p-warn);color:#2A1C0E}
+.bd-c .kc-ink{background:#2A1C0E;color:#F1E4D2}
+.bd-sort{display:flex;align-items:center;gap:8px;font:600 14px var(--cond);color:#2A1C0E}
+.bd-sort select{height:36px;border-radius:8px;border:1px solid rgba(42,28,14,.35);background:var(--label);color:var(--ink-p);padding:0 10px;font:500 14px var(--f);color-scheme:light}
+.bd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.lb{position:relative;display:flex;flex-direction:column;gap:9px;padding:13px 14px 10px;border:0;border-radius:4px;background:var(--label);color:var(--ink-p);text-align:left;cursor:pointer;font:inherit;
+  transform:rotate(var(--r));box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 0 rgba(60,35,10,.12),0 10px 18px -10px rgba(60,35,10,.55);transition:transform .2s var(--out),box-shadow .2s var(--out)}
+.lb:hover{transform:rotate(0) translateY(-3px);box-shadow:0 2px 0 rgba(60,35,10,.12),0 18px 26px -12px rgba(60,35,10,.6)}
+.lb:focus-visible{outline:3px solid #2A1C0E;outline-offset:3px}
+.lb::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;border-radius:4px 4px 0 0;background:var(--sc)}
+.lb.crit{--sc:var(--p-crit)} .lb.warn{--sc:var(--p-warn)} .lb.ok{--sc:var(--p-ok)} .lb.none{--sc:var(--p-none)}
+.lb-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px}
+.lb-code{font:700 15px var(--cond);color:var(--mut-p);letter-spacing:.04em}
+.lb-st{font:600 13px var(--cond);color:var(--sc)}
+.stamp{font:700 15px/1 var(--cond);letter-spacing:.06em;color:var(--sc);padding:4px 8px 3px;border:2px solid var(--sc);border-radius:5px;transform:rotate(-7deg);opacity:.92}
+.lb-name{font:600 16px/1.15 var(--cond);letter-spacing:.005em;min-height:2.3em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.lb-cov{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding-top:8px;border-top:1.5px dashed var(--rule)}
+.lb-d{display:flex;align-items:baseline;gap:5px}
+.lb-d b{font:700 36px/0.9 var(--cond);letter-spacing:-.01em}
+.lb-d b.t{font-size:24px}
+.lb-d small{font:600 15px var(--cond);color:var(--mut-p)}
+.lb.crit .lb-d b{color:var(--p-crit)} .lb.warn .lb-d b{color:#B57A00} .lb.ok .lb-d b{color:var(--p-ok)} .lb.none .lb-d b{color:var(--p-none)}
+.lb-falta{font:700 13px var(--cond);color:#fff;background:var(--p-crit);padding:2px 8px;border-radius:4px;white-space:nowrap}
+.lb-rep{font:600 13px var(--cond);color:var(--mut-p);white-space:nowrap}
+.kb{position:relative;display:grid;grid-template-columns:repeat(12,1fr);gap:3px}
+.kb i{display:block;height:13px;border-radius:2px;border:1.5px solid #CFC7BA;background:linear-gradient(90deg,var(--sc) var(--fp),transparent var(--fp));transform-origin:bottom}
+.kb i.f{border-color:var(--sc)}
+.kb i.p{border-color:var(--sc)}
+.kb.neg i:first-child{background:repeating-linear-gradient(135deg,var(--p-crit) 0 2px,transparent 2px 5px);border-color:var(--p-crit)}
+.kb::after{content:"";position:absolute;top:-4px;bottom:-4px;left:calc(var(--cut) - 1.5px);border-left:1.5px dashed var(--p-crit)}
+.lb-n{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.lb-n span{display:flex;flex-direction:column}
+.lb-n small{font-size:11px;color:var(--mut-p)}
+.lb-n b{font:700 18px/1.1 var(--cond)}
+.lb-n b.neg{color:var(--p-crit)}
+.lb-os{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:24px;padding-top:7px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--mut-p)}
+.lb-os b{color:var(--ink-p);font:700 14px var(--cond);margin-right:3px}
+.lb-os > span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-os .nos{font:700 14px var(--cond);color:var(--p-crit)}
+.lb-os .pz{white-space:nowrap}
+.lb-os .pz.late{color:var(--p-crit);font-weight:700}
+.lb-os .pz.soon{color:#B57A00;font-weight:700}
+.bc{display:block;width:100%;height:13px;fill:#1A1A1A;opacity:.82;margin-top:2px}
 @media (prefers-reduced-motion:no-preference){
-  .pb-main.swap .pc,.play .pc{animation:wIn .45s var(--out) calc(var(--i)*28ms) backwards}
-  .pb-main.swap .pb-dist i,.play .pb-dist i{animation:growX .7s var(--out) calc(var(--i)*.1s) backwards}
-  .pb-main.swap .rt .f{animation:growX .7s var(--out) calc(.15s + var(--i,0)*28ms) backwards}
+  .board.swap .lb,.play .lb{animation:lbIn .45s var(--out) calc(var(--i)*30ms) backwards}
+  .board.swap .kb i.f,.board.swap .kb i.p,.play .kb i.f,.play .kb i.p{animation:growY .35s var(--out) calc(.15s + var(--i,0)*30ms) backwards}
 }
-@media (max-width:980px){
-  .pb{grid-template-columns:minmax(0,1fr)}
-  .pb-side{position:static;flex-direction:row;max-height:none;overflow-x:auto;padding:5px}
-  .pb-fr{flex:none;width:200px}
-}
-@media (max-width:520px){.pb-grid{grid-template-columns:minmax(0,1fr)}.pb-t h3{font-size:20px}}
+@keyframes lbIn{from{opacity:0;transform:translateY(14px) rotate(calc(var(--r) * 6))}}
+@media (max-width:760px){.board{padding:16px 12px 18px;border-radius:0 14px 14px 14px}.bd-h h3{font-size:28px}.bd-grid{grid-template-columns:minmax(0,1fr)}}
 .controls{min-width:0;max-width:100%}
 @media (max-width:760px){.controls .right{margin-left:0;flex-wrap:wrap}.controls .right .sel{flex:1 1 170px;min-width:160px}.block-h{padding-inline:14px}}
 
@@ -2370,7 +2379,7 @@ function frGroups(rows, o = {}){
   el.querySelectorAll('.frh').forEach(b => b.onclick = () => { const k = b.dataset.k; openFr.has(k) ? openFr.delete(k) : openFr.add(k); render();
     const h = el.querySelector(`.frh[data-k="${CSS.escape(k)}"]`); if (h) h.focus({preventScroll:true}); });
 }
-/* ---------- catálogo de produtos: franquias à esquerda, cartões à direita ---------- */
+/* ---------- produtos em etiquetas de caixa sobre papelão kraft ---------- */
 const SELFR = {}, SORTP = {};
 const PSORT = {
   acaba:['Acaba primeiro', (a, b) => (a.dias ?? (a.disp < 0 ? -1e9 : 1e9)) - (b.dias ?? (b.disp < 0 ? -1e9 : 1e9))],
@@ -2378,53 +2387,61 @@ const PSORT = {
   disp:['Menor disponível', (a, b) => (a.disp ?? 1e12) - (b.disp ?? 1e12)],
   nome:['Nome', (a, b) => short(a.desc).localeCompare(short(b.desc), 'pt-BR')]};
 const STC = {'Crítico':'crit', 'Atenção':'warn', 'Seguro':'ok', 'Sem consumo':'none', 'Sem dados':'none'};
+function boxes(it){
+  // 12 caixas de 10 dias (0 a 120); a linha de corte fica no limite crítico
+  const d = it.dias, n = 12, full = d == null ? 0 : Math.max(0, Math.min(n, d / 10)), cut = Math.min(n, P.LimiteCritico / 10);
+  let h = '';
+  for (let i = 0; i < n; i++){ const f = Math.max(0, Math.min(1, full - i)); h += `<i class="${f >= 1 ? 'f' : f > 0 ? 'p' : ''}" style="--fp:${(f * 100).toFixed(0)}%"></i>`; }
+  return `<span class="kb ${it.disp < 0 ? 'neg' : ''}" style="--cut:${(cut / n * 100).toFixed(2)}%" title="Cada caixinha = 10 dias. Linha tracejada = limite de ${P.LimiteCritico} dias.">${h}</span>`;
+}
+function barcode(code){
+  // faixa decorativa no rodapé, desenhada a partir dos dígitos do código
+  const ds = String(code).replace(/\D/g, '').padEnd(6, '0'); let x = 0, r = '';
+  for (const ch of (ds + ds.split('').reverse().join('')).repeat(3)){ const w = .6 + (+ch % 3) * .5; r += `<rect x="${x.toFixed(1)}" width="${w}" height="18"/>`; x += w + .8 + (+ch % 2) * .6; }
+  return `<svg class="bc" viewBox="0 0 ${x.toFixed(1)} 18" preserveAspectRatio="none" aria-hidden="true">${r}</svg>`;
+}
 function pcard(it, i){
-  const c = STC[it.st] || 'none', short_ = it.disp != null && it.disp < 0;
-  const cov = it.dias == null ? `<b class="t">${short_ ? 'em falta' : it.st === 'Sem dados' ? 'sem dados' : 'sem consumo'}</b>` : `<b>${fmt(it.dias)}</b><small>${Math.abs(it.dias) === 1 ? 'dia' : 'dias'}</small>`;
-  const prz = !it.os ? '' : it.stOS === 'Concluída' ? '<span class="tag done">concluída</span>' : it.dPrazo == null ? '<span class="pz">sem prazo</span>' : `<span class="tag ${({'Prazo vencido':'late', 'Próximo do vencimento':'soon', 'Dentro do prazo':'fine'})[it.stOS] || 'os'}">${prazoLabel(it)}</span>`;
-  return `<button type="button" class="pc ${c}" data-cod="${esc(it.cod)}" style="--i:${Math.min(i, 18)}">
-    ${short_ ? `<span class="pc-flag">falta ${fmt(-it.disp)} cx</span>` : ''}
-    <span class="pc-top"><span class="pc-st">${esc(it.st === 'Sem dados' ? 'Sem consumo' : it.st)}</span><span class="pc-code">${esc(it.cod)}</span></span>
-    <span class="pc-name">${esc(short(it.desc))}</span>
-    <span class="pc-cov">${cov}</span>
-    ${ruler(it, Math.min(i, 18), true).replace(/<span class="rv">.*?<\/span><span class="rt/, '<span class="rt')}
-    <span class="pc-nums"><span><small>Estoque</small><b>${fmt(it.est)}</b></span><span><small>Empenhado</small><b>${fmt(it.emp)}</b></span><span><small>Disponível</small><b class="${short_ ? 'neg' : ''}">${fmt(it.disp)}</b></span></span>
-    <span class="pc-foot">${it.os ? `<span class="pc-os"><b>O.S. ${esc(it.os)}</b><span>${it.mov ? esc(it.mov) : 'etapa não informada'}</span></span>${prz}` : it.st === 'Crítico' ? '<span class="tag miss">Sem O.S.</span><span class="pz">abrir ordem</span>' : '<span class="pz">sem O.S.</span>'}</span>
+  const c = STC[it.st] || 'none', falta = it.disp != null && it.disp < 0;
+  const big = it.dias == null ? `<b class="t">${falta ? 'em falta' : 'sem consumo'}</b>` : `<b>${fmt(it.dias)}</b><small>${Math.abs(it.dias) === 1 ? 'dia' : 'dias'}</small>`;
+  const prz = !it.os ? '' : it.stOS === 'Concluída' ? 'concluída' : prazoLabel(it);
+  const pcls = {'Prazo vencido':'late', 'Próximo do vencimento':'soon'}[it.stOS] || '';
+  return `<button type="button" class="lb ${c}" data-cod="${esc(it.cod)}" style="--i:${Math.min(i, 18)};--r:${((i * 37) % 7 - 3) * .18}deg">
+    <span class="lb-h"><span class="lb-code">${esc(it.cod)}</span>${c === 'crit' || c === 'warn' ? `<span class="stamp">${c === 'crit' ? 'Crítico' : 'Atenção'}</span>` : `<span class="lb-st">${c === 'ok' ? 'Seguro' : 'Sem consumo'}</span>`}</span>
+    <span class="lb-name">${esc(short(it.desc))}</span>
+    <span class="lb-cov"><span class="lb-d">${big}</span>${falta ? `<span class="lb-falta">falta ${fmt(-it.disp)} cx</span>` : it.repos ? `<span class="lb-rep">repor ${fmt(it.repos)} cx</span>` : ''}</span>
+    ${boxes(it)}
+    <span class="lb-n"><span><small>Estoque</small><b>${fmt(it.est)}</b></span><span><small>Empenhado</small><b>${fmt(it.emp)}</b></span><span><small>Disponível</small><b class="${falta ? 'neg' : ''}">${fmt(it.disp)}</b></span></span>
+    <span class="lb-os">${it.os ? `<span><b>O.S. ${esc(it.os)}</b> ${it.mov ? esc(it.mov) : 'etapa não informada'}</span><span class="pz ${pcls}">${prz}</span>` : `<span class="${it.st === 'Crítico' ? 'nos' : ''}">${it.st === 'Crítico' ? 'Sem O.S. · abrir ordem' : 'Sem O.S.'}</span>`}</span>
+    ${barcode(it.cod)}
   </button>`;
 }
 function prodBrowser(el, rows, pre, subEl){
   if (!rows.length){ emptyBox(el, 'Nada por aqui', 'Nenhum produto com os filtros escolhidos. Use Limpar no topo para ver tudo.'); if (subEl) subEl.textContent = ''; return; }
-  const g = groupBy(rows, i => i.fr).map(([k, a]) => ({k, a, cr:count(a, i => i.st === 'Crítico'), wa:count(a, i => i.st === 'Atenção'), ok:count(a, i => i.st === 'Seguro'), sc:count(a, i => i.st === 'Sem consumo' || i.st === 'Sem dados'), so:count(a, i => i.st === 'Crítico' && !i.os)}))
-    .sort((x, y) => y.cr - x.cr || y.wa - x.wa || x.k.localeCompare(y.k, 'pt-BR'));
-  const all = {k:'', a:rows, cr:count(rows, i => i.st === 'Crítico'), wa:count(rows, i => i.st === 'Atenção'), ok:count(rows, i => i.st === 'Seguro'), sc:count(rows, i => i.st === 'Sem consumo' || i.st === 'Sem dados'), so:count(rows, i => i.st === 'Crítico' && !i.os)};
+  const sum_ = (k, a) => ({k, a, cr:count(a, i => i.st === 'Crítico'), wa:count(a, i => i.st === 'Atenção'), ok:count(a, i => i.st === 'Seguro'), sc:count(a, i => i.st === 'Sem consumo' || i.st === 'Sem dados'), so:count(a, i => i.st === 'Crítico' && !i.os), fa:count(a, i => i.disp < 0)});
+  const g = groupBy(rows, i => i.fr).map(([k, a]) => sum_(k, a)).sort((x, y) => y.cr - x.cr || y.wa - x.wa || x.k.localeCompare(y.k, 'pt-BR'));
+  const all = sum_('', rows);
   if (SELFR[pre] === undefined || (SELFR[pre] && !g.some(x => x.k === SELFR[pre]))) SELFR[pre] = g[0].k;
   const sel = SELFR[pre] === '' ? all : g.find(x => x.k === SELFR[pre]);
   const sk = SORTP[pre] || 'acaba';
-  const dist = x => [['Crítico', x.cr], ['Atenção', x.wa], ['Seguro', x.ok], ['Sem consumo', x.sc]].filter(p => p[1]);
-  const side = [all, ...g].map(x => { const on = x === sel, nm = x.k || 'Todas as franquias';
-    return `<button type="button" class="pb-fr ${on ? 'on' : ''}" data-k="${esc(x.k)}" aria-pressed="${on}">
-      <span class="av" style="background:${x.k ? (x.cr ? COLOR['Crítico'] : x.wa ? COLOR['Atenção'] : COLOR['Seguro']) : '#F2EEEF'}">${x.k ? esc(initials(x.k)) : '∑'}</span>
-      <span class="nm"><b>${esc(nm)}</b><span>${plural(x.a.length, 'produto', 'produtos')}</span></span>
-      <span class="ct ${x.cr ? 'crit' : ''}" title="${plural(x.cr, 'crítico', 'críticos')}">${x.cr ? fmt(x.cr) : '✓'}</span>
-      <span class="br">${dist(x).map(([k, v]) => `<i style="flex:${v};background:${COLOR[k]}"></i>`).join('')}</span></button>`; }).join('');
+  const tabs = [all, ...g].map(x => `<button type="button" role="tab" class="ft ${x === sel ? 'on' : ''}" data-k="${esc(x.k)}" aria-selected="${x === sel}">${esc(x.k || 'Todas')}${x.cr ? `<span class="n">${fmt(x.cr)}</span>` : ''}</button>`).join('');
   const list = sel.a.slice().sort(PSORT[sk][1]);
-  el.innerHTML = `<div class="pb">
-    <aside class="pb-side" aria-label="Franquias">${side}</aside>
-    <div class="pb-main">
-      <header class="pb-head">
-        <div class="pb-t"><h3>${esc(sel.k || 'Todas as franquias')}</h3>
-          <p>${plural(sel.a.length, 'produto', 'produtos')}${sel.cr ? ` · <b class="c">${plural(sel.cr, 'crítico', 'críticos')}</b>` : ''}${sel.wa ? ` · <b class="w">${fmt(sel.wa)} em atenção</b>` : ''}${sel.so ? ` · ${plural(sel.so, 'crítico sem O.S.', 'críticos sem O.S.')}` : ''}</p></div>
-        <label class="pb-sort">Ordenar <select class="sel" data-sort>${Object.entries(PSORT).map(([k, [l]]) => `<option value="${k}" ${k === sk ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+  const chip = (n, l, c) => n ? `<span class="kc-${c}"><b>${fmt(n)}</b> ${l}</span>` : '';
+  el.innerHTML = `<div class="kr">
+    <div class="ftabs" role="tablist" aria-label="Franquias">${tabs}</div>
+    <div class="board">
+      <header class="bd-h">
+        <div><h3>${esc(sel.k || 'Todas as franquias')}</h3>
+          <p class="bd-c"><span><b>${fmt(sel.a.length)}</b> ${sel.a.length === 1 ? 'produto' : 'produtos'}</span>${chip(sel.cr, sel.cr === 1 ? 'crítico' : 'críticos', 'crit')}${chip(sel.wa, 'em atenção', 'warn')}${chip(sel.fa, 'já em falta', 'crit')}${chip(sel.so, 'críticos sem O.S.', 'ink')}</p></div>
+        <label class="bd-sort">Ordenar<select data-sort>${Object.entries(PSORT).map(([k, [l]]) => `<option value="${k}" ${k === sk ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
       </header>
-      <div class="pb-dist">${dist(sel).map(([k, v], i) => `<i style="flex:${v};background:${COLOR[k]};--i:${i}" data-tip="<b>${esc(k)}</b>: ${plural(v, 'produto', 'produtos')}"></i>`).join('')}</div>
-      <div class="pb-grid">${list.map(pcard).join('')}</div>
+      <div class="bd-grid">${list.map(pcard).join('')}</div>
     </div></div>`;
-  if (subEl) subEl.textContent = `${plural(g.length, 'franquia', 'franquias')} · ${plural(rows.length, 'produto', 'produtos')}`;
-  const anim = () => { const m = el.querySelector('.pb-main'); m.classList.remove('swap'); void m.offsetWidth; m.classList.add('swap'); };
-  el.querySelectorAll('.pb-fr').forEach(b => b.onclick = () => { SELFR[pre] = b.dataset.k; render(); anim(); const n = el.querySelector(`.pb-fr[data-k="${CSS.escape(b.dataset.k)}"]`); if (n) n.focus({preventScroll:true});
-    const top = el.querySelector('.pb-main').getBoundingClientRect().top; if (top < 70 || top > innerHeight) el.querySelector('.pb-main').scrollIntoView({block:'start', behavior: RM.matches ? 'auto' : 'smooth'}); });
-  el.querySelector('[data-sort]').onchange = e => { SORTP[pre] = e.target.value; render(); anim(); };
-  el.querySelectorAll('.pc').forEach(c => c.onclick = () => openItem(c.dataset.cod));
+  if (subEl) subEl.textContent = `${plural(g.length, 'franquia', 'franquias')} · ${plural(rows.length, 'produto', 'produtos')} · a etiqueta mostra cada caixinha como 10 dias de estoque`;
+  const swap = () => { const m = el.querySelector('.board'); m.classList.remove('swap'); void m.offsetWidth; m.classList.add('swap'); };
+  const onTab = el.querySelector('.ft.on'); if (onTab) onTab.scrollIntoView({block:'nearest', inline:'nearest'});
+  el.querySelectorAll('.ft').forEach(b => b.onclick = () => { SELFR[pre] = b.dataset.k; render(); swap(); const n = el.querySelector(`.ft[data-k="${CSS.escape(b.dataset.k)}"]`); if (n){ n.focus({preventScroll:true}); n.scrollIntoView({block:'nearest', inline:'center', behavior: RM.matches ? 'auto' : 'smooth'}); } });
+  el.querySelector('[data-sort]').onchange = e => { SORTP[pre] = e.target.value; render(); swap(); };
+  el.querySelectorAll('.lb').forEach(c => c.onclick = () => openItem(c.dataset.cod));
 }
 function colLabel(s){ const p = String(s).split(' '); const w = p[0].length <= 3 && p[1] ? p[1] : p[0]; return w.length > 7 ? w.slice(0, 6) + '…' : w; }
 function initials(s){ const w = String(s).replace(/\b(do|da|de|dos|das|e)\b/gi, '').split(/\s+/).filter(Boolean); return ((w[0] || '?')[0] + ((w[1] || '')[0] || '')).toUpperCase(); }
