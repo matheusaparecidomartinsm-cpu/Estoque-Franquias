@@ -403,6 +403,32 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 @media (max-width:980px){.app-logo{inset:8px;border-radius:24px}.al-float{width:110vw;margin-top:20vh}}
 @media (prefers-reduced-motion:reduce){.al-float,.al-shine{animation:none}}
 
+
+/* produtos por franquia: lista que abre */
+.frl-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 20px 14px}
+.frl-bar .btn{margin-left:auto}
+.frl{display:flex;flex-direction:column;gap:8px;padding:0 14px 14px}
+.frg{border:1px solid var(--line);border-radius:16px;background:rgba(18,17,18,.6);overflow:hidden;transition:border-color .2s var(--out)}
+.frg.open{border-color:rgba(255,107,114,.35);background:rgba(22,20,21,.85)}
+.frh{width:100%;display:grid;grid-template-columns:36px minmax(0,1.3fr) minmax(0,1fr) 140px 32px;gap:14px;align-items:center;padding:12px 14px;border:0;background:none;cursor:pointer;text-align:left;color:var(--ink)}
+.frh:hover{background:var(--hover)}
+.frh .av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--display);color:#0B0B0C}
+.frh .fn{display:flex;flex-direction:column;min-width:0}
+.frh .fn b{font:600 15px var(--display);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.frh .fn span{font-size:12.5px;color:var(--muted)}
+.frh .fn em{font-style:normal;color:var(--crit);font-weight:600}
+.frh .fc{display:flex;gap:6px;flex-wrap:wrap}
+.frh .fb{display:flex;gap:2px;height:8px;border-radius:4px;overflow:hidden}
+.frh .fb i{display:block;height:100%}
+.frh .chv{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--surface-3);border:1px solid var(--line)}
+.frh .chv svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s var(--out)}
+.frh[aria-expanded="true"] .chv svg{transform:rotate(180deg)}
+.frb{border-top:1px solid var(--line);animation:frOpen .3s var(--out)}
+.frb .tbl{max-height:560px;border-radius:0}
+@keyframes frOpen{from{opacity:0;translate:0 -6px}}
+@media (max-width:760px){.frh{grid-template-columns:32px minmax(0,1fr) 28px;gap:10px}.frh .fc{grid-column:2;grid-row:2}.frh .fb{display:none}.frh .chv{grid-column:3;grid-row:1}.frl{padding:0 8px 8px}}
+@media (prefers-reduced-motion:no-preference){.play .frg{animation:wIn .5s var(--out) calc(.3s + var(--i)*40ms) backwards}}
+
 /* ---------- uma sequência de entrada, só na primeira exibição ---------- */
 @keyframes wIn{from{opacity:0;translate:0 12px}}
 @keyframes growX{from{scale:0 1}}
@@ -602,9 +628,9 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
         <ul class="urg" id="actList"></ul>
       </div>
       <div class="glass g-all" style="--i:4;padding:0">
-        <div class="gh" style="padding:18px 20px 0;flex-wrap:wrap"><span class="gi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></span><div><h2>Todos os produtos da planilha</h2><p class="gs" id="allSub"></p></div><button class="pill" type="button" id="allExp">Exportar <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
-        <div class="seg" id="allSeg" style="padding:12px 20px 14px"></div>
-        <div class="tbl cards" id="tAll" style="max-height:720px"></div>
+        <div class="gh" style="padding:18px 20px 0;flex-wrap:wrap"><span class="gi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></span><div><h2>Produtos por franquia</h2><p class="gs" id="allSub"></p></div><button class="pill" type="button" id="allExp">Exportar <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
+        <div class="frl-bar"><div class="seg" id="allSeg"></div><button class="btn sm" type="button" id="allToggle">Abrir todas</button></div>
+        <div class="frl" id="tAll"></div>
       </div>
     </div>
   </section>
@@ -2240,10 +2266,37 @@ function rResumo(fl){
   $('#allSeg').innerHTML = aopts.map(([k, l]) => `<button type="button" data-k="${k}" aria-pressed="${ak === k}">${k ? `<i style="background:${COLOR[k]}"></i>` : ''}${l} <b>${fmt(count(fl, i => inSt(i, k)))}</b></button>`).join('');
   $('#allSeg').querySelectorAll('button').forEach(b => b.onclick = () => { F.st = b.dataset.k ? new Set([b.dataset.k]) : new Set(); render(); });
   const allRows = fl.filter(i => inSt(i, ak));
-  $('#allSub').textContent = `${plural(allRows.length, 'produto', 'produtos')} · posição de ${brDate(snaps.at(-1).date)} · clique no título da coluna para ordenar`;
-  table('tAll', allRows, ['mat','cov','media','est','emp','disp','osc','prz'], ['cov','asc']);
+  frGroups(allRows);
   $('#allExp').onclick = () => $('#expEstoque').click();
   $('#seeAll').textContent = cr.length > 7 ? `Ver os ${fmt(cr.length)}` : 'Ver no estoque';
+}
+const openFr = new Set();
+const frId = k => 'fr-' + norm(k).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+function frGroups(rows){
+  const el = $('#tAll');
+  const g = groupBy(rows, i => i.fr).map(([k, a]) => ({k, a, cr:count(a, i => i.st === 'Crítico'), wa:count(a, i => i.st === 'Atenção'), ok:count(a, i => i.st === 'Seguro'), sc:count(a, i => i.st === 'Sem consumo' || i.st === 'Sem dados'), so:count(a, i => i.st === 'Crítico' && !i.os)}))
+    .sort((x, y) => y.cr - x.cr || y.wa - x.wa || x.k.localeCompare(y.k, 'pt-BR'));
+  $('#allSub').textContent = `${plural(g.length, 'franquia', 'franquias')} · ${plural(rows.length, 'produto', 'produtos')} · clique numa franquia para ver os produtos dela`;
+  if (!rows.length){ emptyBox(el, 'Nada por aqui', 'Nenhum produto com os filtros escolhidos.'); $('#allToggle').hidden = true; return; }
+  $('#allToggle').hidden = false;
+  const allOpen = g.every(x => openFr.has(x.k));
+  $('#allToggle').textContent = allOpen ? 'Fechar todas' : 'Abrir todas';
+  $('#allToggle').onclick = () => { allOpen ? openFr.clear() : g.forEach(x => openFr.add(x.k)); render(); };
+  el.innerHTML = g.map((x, i) => { const o = openFr.has(x.k), id = frId(x.k), n = x.a.length;
+    const bar = [['Crítico', x.cr], ['Atenção', x.wa], ['Seguro', x.ok], ['Sem consumo', x.sc]].filter(p => p[1]).map(([k, v]) => `<i style="flex:${v};background:${COLOR[k]}"></i>`).join('');
+    return `<section class="frg ${o ? 'open' : ''}" style="--i:${Math.min(i, 12)}">
+      <button type="button" class="frh" data-k="${esc(x.k)}" aria-expanded="${o}" aria-controls="${id}">
+        <span class="av" style="background:${x.cr ? COLOR['Crítico'] : x.wa ? COLOR['Atenção'] : COLOR['Seguro']}">${esc(initials(x.k))}</span>
+        <span class="fn"><b>${esc(x.k)}</b><span>${plural(n, 'produto', 'produtos')}${x.so ? ` · <em>${plural(x.so, 'crítico sem O.S.', 'críticos sem O.S.')}</em>` : ''}</span></span>
+        <span class="fc">${x.cr ? `<span class="tag miss">${fmt(x.cr)} ${x.cr === 1 ? 'crítico' : 'críticos'}</span>` : ''}${x.wa ? `<span class="tag soon">${fmt(x.wa)} em atenção</span>` : ''}${!x.cr && !x.wa ? '<span class="tag fine">tudo seguro</span>' : ''}</span>
+        <span class="fb" title="${fmt(x.cr)} críticos, ${fmt(x.wa)} em atenção, ${fmt(x.ok)} seguros, ${fmt(x.sc)} sem consumo">${bar}</span>
+        <span class="chv" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span>
+      </button>
+      ${o ? `<div class="frb"><div class="tbl cards" id="${id}"></div></div>` : ''}
+    </section>`; }).join('');
+  g.forEach(x => { if (openFr.has(x.k)) table(frId(x.k), x.a, ['mat','cov','media','est','emp','disp','osc','prz'], ['cov','asc']); });
+  el.querySelectorAll('.frh').forEach(b => b.onclick = () => { const k = b.dataset.k; openFr.has(k) ? openFr.delete(k) : openFr.add(k); render();
+    const h = el.querySelector(`.frh[data-k="${CSS.escape(k)}"]`); if (h) h.focus({preventScroll:true}); });
 }
 function colLabel(s){ const p = String(s).split(' '); const w = p[0].length <= 3 && p[1] ? p[1] : p[0]; return w.length > 7 ? w.slice(0, 6) + '…' : w; }
 function initials(s){ const w = String(s).replace(/\b(do|da|de|dos|das|e)\b/gi, '').split(/\s+/).filter(Boolean); return ((w[0] || '?')[0] + ((w[1] || '')[0] || '')).toUpperCase(); }
