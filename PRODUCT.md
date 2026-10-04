@@ -6,6 +6,8 @@ Painel web interno da ProFood Embalagens para controlar, todo dia, o estoque de 
 ## Quem usa
 - **Analista de PCP** (dono do painel): libera produção, abre O.S. e controla o estoque de todas as franquias. Trabalha sozinho e sob carga alta, então o painel precisa dizer em segundos o que resolver primeiro.
 - **Equipe interna** com três perfis: administrador (edita e gerencia usuários), editor (edita O.S., etapa, prazo e importa a planilha) e leitor (só consulta).
+- **Chefia / diretoria:** olha o resumo e os números gerais; o painel também serve para mostrar o trabalho do PCP.
+- **Comercial / vendedores:** consultam o estoque de uma franquia para responder ao cliente.
 - Uso principal no computador do escritório; consulta rápida no celular.
 
 ## Trabalho principal
@@ -20,7 +22,7 @@ Painel web interno da ProFood Embalagens para controlar, todo dia, o estoque de 
 - **Situações:** crítico abaixo de 40 dias; atenção de 40 a 54 dias (margem de 15); seguro a partir de 55; sem consumo quando não há média de saída. Os limites são editáveis em Configurações.
 - **O.S.:** número, etapa (Impressão, Corte e Vinco, Colagem, Formando etc.) e prazo. Situação do prazo: vencido, vencendo em até 5 dias, no prazo, sem prazo, concluída.
 - **Franquia:** identificada pela primeira palavra-chave encontrada na descrição do produto.
-- Cerca de 330 produtos e 26 franquias por posição.
+- São 26 franquias atendidas e cerca de 330 produtos por posição.
 
 ## Vocabulário (usar exatamente estes termos)
 Material/produto, franquia, estoque, empenhado, disponível, cobertura (dias de estoque), crítico, atenção, seguro, sem consumo, O.S., etapa, prazo, posição (a planilha de um dia), importar planilha.
@@ -29,6 +31,9 @@ Material/produto, franquia, estoque, empenhado, disponível, cobertura (dias de 
 - **Login** — modo Experience: tela de marca. Fundo preto, ondas vermelhas em WebGL na parte de baixo, logo ProFood branca com leve 3D, cartão de vidro sem textos extras.
 - **Painel (Visão geral, Estoque, Franquias, O.S., Histórico, Configurações, Guia Power BI)** — modo Operate: leitura rápida, prioridade clara, edição em painel lateral.
 - **Parte de produtos** — etiquetas de caixa sobre papelão kraft, com abas de franquia por cima e cobertura em 12 caixinhas de 10 dias.
+
+## Sensação desejada
+Ao mesmo tempo: **calma e organizado** (tudo no lugar, fácil de achar), **controle e urgência** (o que está pegando fogo aparece primeiro), **orgulho da marca** (cara de ProFood, bom para mostrar à chefia) e **moderno e tecnológico** (vidro, animações, efeitos). Em conflito, vence a clareza: o efeito nunca pode atrasar a leitura de um número crítico.
 
 ## Marca e direção visual
 - Cores da ProFood: preto, vermelho `#E3323B` e branco. O resto do painel segue essa paleta; a parte de produtos usa kraft e etiqueta branca por escolha do usuário.
