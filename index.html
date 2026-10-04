@@ -206,7 +206,7 @@ section.tab{display:flex;flex-direction:column;gap:18px}
 .urg li:hover{background:rgba(35,33,35,.8)}
 .urg li.first{border-color:rgba(255,107,114,.55);background:rgba(40,22,25,.7);box-shadow:0 0 0 3px rgba(227,50,59,.08)}
 .urg .av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:700 12px var(--display);color:#0B0B0C}
-.urg .t{display:block;font-weight:600;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.urg .t{font-weight:600;font-size:13.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .urg .role{display:block;font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .urg .val{text-align:right;font-weight:600;font-size:14px;white-space:nowrap}
 .urg .val small{display:block;font-size:11.5px;font-weight:500;color:var(--muted)}
@@ -506,6 +506,33 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
 .controls{min-width:0;max-width:100%}
 @media (max-width:760px){.controls .right{margin-left:0;flex-wrap:wrap}.controls .right .sel{flex:1 1 170px;min-width:160px}.block-h{padding-inline:14px}}
 
+
+/* menu com nome visível embaixo de cada ícone */
+#appRoot{grid-template-columns:104px minmax(0,1fr)}
+.tabs,.aux{border-radius:24px;padding:6px;gap:4px}
+.tabs button,.aux button,.logout{width:76px;height:58px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.tabs button span,.aux button span,.logout span{position:static;translate:none;opacity:1;background:none;border:0;padding:0;font-size:10.5px;font-weight:600;line-height:1.1;color:inherit;white-space:nowrap;pointer-events:none}
+.tabs button:hover span,.aux button:hover span,.tabs button:focus-visible span,.aux button:focus-visible span{translate:none}
+.tabs button[aria-selected="true"],.aux button[aria-selected="true"]{border-radius:16px}
+.tabs button .ni,.aux button .ni,.logout .ni{width:19px;height:19px}
+@media (max-width:980px){
+  #appRoot{grid-template-columns:minmax(0,1fr)}
+  #appRoot>header.top .in{justify-content:flex-start;overflow-x:auto;scrollbar-width:none}
+  .tabs button span,.aux button span{display:block}
+  .tabs button,.aux button,.logout{width:64px;height:52px;flex:none}
+}
+@media (max-width:760px){.tabs button,.aux button,.logout{width:58px;height:50px}.tabs button span,.aux button span,.logout span{font-size:9.5px}}
+
+
+/* filtros ativos visíveis no topo */
+.fchips{display:contents}
+.fcl{font-size:12px;color:var(--muted)}
+.fchip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 6px 0 12px;border-radius:15px;border:1px solid rgba(255,107,114,.45);background:rgba(227,50,59,.14);color:var(--ink);font-size:12.5px;font-weight:600;cursor:pointer}
+.fchip span{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.1);font-size:14px;line-height:1}
+.fchip:hover span{background:var(--c-crit)}
+.bd-empty{grid-column:1/-1;padding:28px;border-radius:10px;background:rgba(251,250,247,.6);color:#3B2A18;text-align:center}
+.bd-empty b{display:block;font:700 18px var(--cond);color:#2A1C0E}
+
 /* ---------- uma sequência de entrada, só na primeira exibição ---------- */
 @keyframes wIn{from{opacity:0;translate:0 12px}}
 @keyframes growX{from{scale:0 1}}
@@ -651,14 +678,14 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
   <div class="in">
     <div class="rail-mark" aria-hidden="true"><span class="plogo"></span></div>
     <nav class="tabs" role="tablist" id="tabs" aria-label="Seções">
-      <button role="tab" data-tab="resumo" aria-selected="true"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/></svg><span>Resumo</span></button>
+      <button role="tab" data-tab="resumo" aria-selected="true" aria-label="Visão geral"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/></svg><span>Visão geral</span></button>
       <button role="tab" data-tab="estoque"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg><span>Estoque</span></button>
       <button role="tab" data-tab="franquias"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg><span>Franquias</span></button>
-      <button role="tab" data-tab="os"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 3h4v15H4V6h4z"/><path d="M9 12h6M9 16h4"/></svg><span>Ordens de serviço</span></button>
+      <button role="tab" data-tab="os" aria-label="Ordens de serviço"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6l1 3h4v15H4V6h4z"/><path d="M9 12h6M9 16h4"/></svg><span>O.S.</span></button>
       <button role="tab" data-tab="historico"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg><span>Histórico</span></button>
     </nav>
-    <div class="aux"><span class="navlbl">Sistema</span><button data-tab="config" type="button"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Configurações</span></button><button data-tab="guia" type="button"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg><span>Guia Power BI</span></button></div>
-    <button type="button" class="logout" id="btnLogout" title="Sair" aria-label="Sair"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17-5-5 5-5M5 12h12"/></svg></button>
+    <div class="aux"><span class="navlbl">Sistema</span><button data-tab="config" type="button"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Configurações</span></button><button data-tab="guia" type="button" aria-label="Guia Power BI"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg><span>Guia</span></button></div>
+    <button type="button" class="logout" id="btnLogout"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17-5-5 5-5M5 12h12"/></svg><span>Sair</span></button>
   </div>
 </header>
 
@@ -668,12 +695,12 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
     <div class="fbox" id="filters">
       <label class="sbox"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input class="search" id="fQ" type="search" placeholder="Buscar código, produto ou O.S." aria-label="Buscar"><kbd>/</kbd></label>
       <select class="sel" id="fFr" aria-label="Franquia"><option value="">Todas as franquias</option></select>
-      <button class="btn" id="fClear" type="button" hidden>Limpar</button>
+      <span class="fchips" id="fChips"></span><button class="btn sm" id="fClear" type="button" hidden>Limpar filtros</button>
       <span class="where" id="baseDate">Carregando…</span>
     </div>
     <div class="tright">
       <span class="sync" id="sync"><i></i><span>conectando</span></span>
-      <button class="ibtn" id="btnImport" type="button" title="Importar planilha" aria-label="Importar planilha"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg></button>
+      <button class="btn primary" id="btnImport" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg>Importar planilha</button>
       <span class="me"><span class="avatar" id="meAv">?</span><span class="mtx"><span id="meName"></span><span class="mrole" id="meRole"></span></span></span>
     </div>
   </div>
@@ -701,13 +728,8 @@ details.code pre{border:0;border-top:1px solid var(--line);border-radius:0}
         <div class="cols-chart" id="frBars"></div>
       </div>
       <div class="glass g-list" style="--i:3">
-        <div class="gh"><span class="gi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span><h2>Mais urgentes</h2><button class="more" type="button" id="seeAll">Ver todos</button></div>
+        <div class="gh"><span class="gi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span><div><h2>Mais urgentes</h2><p class="gs">Primeiro o que já falta, depois o que acaba antes</p></div><button class="more" type="button" id="seeAll">Ver todos</button></div>
         <ul class="urg" id="actList"></ul>
-      </div>
-      <div class="glass g-all" style="--i:4;padding:0">
-        <div class="gh" style="padding:18px 20px 0;flex-wrap:wrap"><span class="gi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg></span><div><h2>Produtos por franquia</h2><p class="gs" id="allSub"></p></div><button class="pill" type="button" id="allExp">Exportar <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div>
-        <div class="frl-bar"><div class="seg" id="allSeg"></div></div>
-        <div id="tAll" style="padding:0 14px 14px"></div>
       </div>
     </div>
   </section>
@@ -2099,6 +2121,9 @@ const NODATA = ['Nenhuma posição de estoque salva', 'Use Importar planilha par
 
 /* ---------- tabela genérica ---------- */
 /* régua de cobertura: 0 a 3× o limite, marcas a cada 1/12, limite como linha de faca */
+/* urgência: primeiro o que já falta (maior falta em caixas), depois o que acaba antes; sem consumo por último */
+const urgKey = it => it.disp != null && it.disp < 0 ? -1e9 + it.disp : it.dias ?? 1e9;
+const byUrg = (a, b) => urgKey(a) - urgKey(b);
 function ruler(it, i = 0, big = false){
   const cls = it.disp != null && it.disp < 0 ? 'crit' : (DCLS[it.st] || 'none');
   const max = P.LimiteCritico * 3, lim = P.LimiteCritico / max * 100;
@@ -2106,11 +2131,11 @@ function ruler(it, i = 0, big = false){
   if (it.dias == null && !(it.disp < 0)) val = `<b>${it.st === 'Sem dados' ? 'sem dados' : 'sem consumo'}</b>`;
   else {
     const d = it.dias ?? 0;
-    val = (it.dias == null ? `<b>em falta</b>` : `<b>${fmt(d)}</b><small>${Math.abs(d) === 1 ? 'dia' : 'dias'}</small>`) + `${it.disp < 0 ? `<em>falta ${fmt(-it.disp)} cx</em>` : ''}`;
+    val = it.disp < 0 ? `<b>Em falta</b><em>${fmt(-it.disp)} cx</em>` : `<b>${fmt(d)}</b><small>${Math.abs(d) === 1 ? 'dia' : 'dias'}</small>`;
     f = d <= 0 ? `<span class="f short" style="width:9%;--i:${i}"></span>`
       : `<span class="f" style="width:${Math.min(100, d / max * 100).toFixed(1)}%;background:${COLOR[it.st]};--i:${i}"></span>`;
   }
-  const tip = it.dias == null ? '' : ` title="${it.dias < 0 ? 'Estoque já não cobre o empenhado' : `Dura ${plural(it.dias, 'dia', 'dias')}; limite ${P.LimiteCritico}`}"`;
+  const tip = it.dias == null ? '' : ` title="${it.disp < 0 ? `Empenhado maior que o estoque: faltam ${fmt(-it.disp)} cx` : `Dura ${plural(it.dias, 'dia', 'dias')}; limite ${P.LimiteCritico}`}"`;
   return `<span class="rl ${cls}"${tip}><span class="rv">${val}</span><span class="rt${big ? ' big' : ''}">${f}<span class="lm" style="left:${lim.toFixed(1)}%"></span></span></span>`;
 }
 function osCell(it){
@@ -2125,8 +2150,8 @@ function prazoCell(it){
 const COLS = {
   mat:{h:'Material', v:it => short(it.desc), c:'c-mat', r:it => `<span class="mat">${esc(short(it.desc))}</span><span class="sub">${esc(it.cod)} · ${esc(it.fr)}${it.edited ? ' · <span style="color:var(--ok)">editado</span>' : ''}</span>`},
   prod:{h:'Material', v:it => short(it.desc), c:'c-mat', r:it => `<span class="mat">${esc(short(it.desc))}</span><span class="sub">${esc(it.cod)} · ${esc(it.fr)}</span>`},
-  cov:{h:'Cobertura', v:it => it.dias ?? (it.disp < 0 ? -1e9 + it.disp : 1e9), c:'c-cov', r:(it, i) => ruler(it, i)},
-  dias:{h:'Cobertura', v:it => it.dias ?? (it.disp < 0 ? -1e9 + it.disp : 1e9), c:'c-cov', r:(it, i) => ruler(it, i)},
+  cov:{h:'Cobertura', v:urgKey, c:'c-cov', r:(it, i) => ruler(it, i)},
+  dias:{h:'Cobertura', v:urgKey, c:'c-cov', r:(it, i) => ruler(it, i)},
   disp:{h:'Disponível', n:1, v:it => it.disp ?? -1e12, c:'c-num', r:it => `<span class="${it.disp < 0 ? 'neg' : ''}" style="font-weight:600">${fmt(it.disp)}</span>`},
   media:{h:'Média/mês', n:1, v:it => it.media ?? -1, c:'c-num', r:it => fmt(it.media)},
   est:{h:'Estoque', n:1, v:it => it.est ?? -1e12, c:'c-num', r:it => fmt(it.est)},
@@ -2276,7 +2301,15 @@ function render(){
   $('#baseDate').innerHTML = cur ? `Posição de <b>${brDate(cur.date)}</b>` : 'Nenhuma posição importada ainda';
   fillSelect('#fFr', [...new Set(items.map(i => i.fr))].sort((a, b) => a.localeCompare(b, 'pt-BR')), F.fr);
   fillSelect('#fCat', [...new Set(items.map(i => i.cat))].sort((a, b) => a.localeCompare(b, 'pt-BR')), F.cat);
-  $('#fClear').hidden = !(F.fr || F.q || F.cat || F.st.size);
+  $('#fClear').hidden = !(F.fr || F.q || F.cat || F.st.size || F.os);
+  const ch = [];
+  if (F.st.size) ch.push(['st', 'Situação: ' + [...F.st].join(', ')]);
+  if (F.fr) ch.push(['fr', 'Franquia: ' + F.fr]);
+  if (F.cat) ch.push(['cat', 'Categoria: ' + F.cat]);
+  if (F.q) ch.push(['q', `Busca: “${F.q}”`]);
+  if (F.os && TAB === 'os') ch.push(['os', 'Prazo: ' + F.os]);
+  $('#fChips').innerHTML = ch.length ? '<span class="fcl">Filtros ativos</span>' + ch.map(([k, l]) => `<button type="button" class="fchip" data-k="${k}" aria-label="Tirar filtro ${esc(l)}">${esc(l)}<span aria-hidden="true">×</span></button>`).join('') : '';
+  $('#fChips').querySelectorAll('.fchip').forEach(b => b.onclick = () => { const k = b.dataset.k; if (k === 'st') F.st = new Set(); else if (k === 'q'){ F.q = ''; $('#fQ').value = ''; } else F[k] = ''; render(); });
   const focusId = document.activeElement && document.activeElement.id;
   const fl = filtered();
   ({resumo:rResumo, estoque:rEstoque, franquias:rFranquias, os:rOS, historico:rHist, config:rConfig, guia:() => {}})[TAB](fl);
@@ -2330,23 +2363,14 @@ function rResumo(fl){
     .filter(r => r.al).sort((a, b) => b.al - a.al || b.n - a.n).slice(0, 12);
   frColumns($('#frBars'), rk);
   // mais urgentes
-  const act = cr.slice().sort((a, b) => (a.dias ?? -1e9) - (b.dias ?? -1e9)).slice(0, 7);
+  const act = fl.filter(i => i.st === 'Crítico' || i.disp < 0).sort(byUrg).slice(0, 7);
   const al = $('#actList');
   if (!act.length) al.innerHTML = '<li class="empty" style="display:block"><b>Nenhum material crítico</b>Nada precisa de reposição agora.</li>';
   else {
     al.innerHTML = act.map((it, i) => { const c = coverLabel(it);
-      return `<li data-cod="${esc(it.cod)}" tabindex="0" class="${i === 0 ? 'first' : ''}" style="--i:${i}"><span class="av" style="background:${COLOR[it.st]}">${esc(initials(it.fr))}</span><span style="min-width:0"><span class="t">${esc(short(it.desc))}</span><span class="role">${esc(it.cod)} · ${esc(it.fr)}${it.os ? ' · O.S. ' + esc(it.os) : ' · sem O.S.'}</span></span><span class="val crit">${it.dias == null ? 'em falta' : fmt(it.dias) + ' dias'}<small>${it.disp < 0 ? 'falta ' + fmt(-it.disp) + ' cx' : esc(c.t)}</small></span><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span></li>`; }).join('');
+      return `<li data-cod="${esc(it.cod)}" tabindex="0" class="${i === 0 ? 'first' : ''}" style="--i:${i}"><span class="av" style="background:${COLOR[it.st]}">${esc(initials(it.fr))}</span><span style="min-width:0"><span class="t">${esc(short(it.desc))}</span><span class="role">${esc(it.cod)} · ${esc(it.fr)}${it.os ? ' · O.S. ' + esc(it.os) : ' · sem O.S.'}</span></span><span class="val crit">${it.disp < 0 ? 'Em falta' : fmt(it.dias) + (Math.abs(it.dias) === 1 ? ' dia' : ' dias')}<small>${it.disp < 0 ? fmt(-it.disp) + ' cx' : 'abaixo do limite'}</small></span><span class="go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span></li>`; }).join('');
     al.querySelectorAll('li[data-cod]').forEach(li => { li.onclick = () => openItem(li.dataset.cod); li.onkeydown = e => { if (e.key === 'Enter') openItem(li.dataset.cod); }; });
   }
-  // todos os produtos
-  const aopts = [['', 'Todos'], ['Crítico', 'Críticos'], ['Atenção', 'Atenção'], ['Seguro', 'Seguros'], ['Sem consumo', 'Sem consumo']];
-  const ak = [...F.st][0] || '';
-  const inSt = (i, k) => !k || i.st === k || (k === 'Sem consumo' && i.st === 'Sem dados');
-  $('#allSeg').innerHTML = aopts.map(([k, l]) => `<button type="button" data-k="${k}" aria-pressed="${ak === k}">${k ? `<i style="background:${COLOR[k]}"></i>` : ''}${l} <b>${fmt(count(fl, i => inSt(i, k)))}</b></button>`).join('');
-  $('#allSeg').querySelectorAll('button').forEach(b => b.onclick = () => { F.st = b.dataset.k ? new Set([b.dataset.k]) : new Set(); render(); });
-  const allRows = fl.filter(i => inSt(i, ak));
-  prodBrowser($('#tAll'), allRows, 'ov', $('#allSub'));
-  $('#allExp').onclick = () => $('#expEstoque').click();
   $('#seeAll').textContent = cr.length > 7 ? `Ver os ${fmt(cr.length)}` : 'Ver no estoque';
 }
 const OPENFR = {};
@@ -2382,8 +2406,8 @@ function frGroups(rows, o = {}){
 /* ---------- produtos em etiquetas de caixa sobre papelão kraft ---------- */
 const SELFR = {}, SORTP = {};
 const PSORT = {
-  acaba:['Acaba primeiro', (a, b) => (a.dias ?? (a.disp < 0 ? -1e9 : 1e9)) - (b.dias ?? (b.disp < 0 ? -1e9 : 1e9))],
-  semos:['Sem O.S. primeiro', (a, b) => (!!a.os - !!b.os) || ((a.dias ?? 1e9) - (b.dias ?? 1e9))],
+  acaba:['Mais urgente primeiro', byUrg],
+  semos:['Sem O.S. primeiro', (a, b) => (!!a.os - !!b.os) || byUrg(a, b)],
   disp:['Menor disponível', (a, b) => (a.disp ?? 1e12) - (b.disp ?? 1e12)],
   nome:['Nome', (a, b) => short(a.desc).localeCompare(short(b.desc), 'pt-BR')]};
 const STC = {'Crítico':'crit', 'Atenção':'warn', 'Seguro':'ok', 'Sem consumo':'none', 'Sem dados':'none'};
@@ -2402,13 +2426,13 @@ function barcode(code){
 }
 function pcard(it, i){
   const c = STC[it.st] || 'none', falta = it.disp != null && it.disp < 0;
-  const big = it.dias == null ? `<b class="t">${falta ? 'em falta' : 'sem consumo'}</b>` : `<b>${fmt(it.dias)}</b><small>${Math.abs(it.dias) === 1 ? 'dia' : 'dias'}</small>`;
+  const big = falta ? `<b class="t">Em falta</b>` : it.dias == null ? `<b class="t">sem consumo</b>` : `<b>${fmt(it.dias)}</b><small>${Math.abs(it.dias) === 1 ? 'dia' : 'dias'}</small>`;
   const prz = !it.os ? '' : it.stOS === 'Concluída' ? 'concluída' : prazoLabel(it);
   const pcls = {'Prazo vencido':'late', 'Próximo do vencimento':'soon'}[it.stOS] || '';
   return `<button type="button" class="lb ${c}" data-cod="${esc(it.cod)}" style="--i:${Math.min(i, 18)};--r:${((i * 37) % 7 - 3) * .18}deg">
     <span class="lb-h"><span class="lb-code">${esc(it.cod)}</span>${c === 'crit' || c === 'warn' ? `<span class="stamp">${c === 'crit' ? 'Crítico' : 'Atenção'}</span>` : `<span class="lb-st">${c === 'ok' ? 'Seguro' : 'Sem consumo'}</span>`}</span>
     <span class="lb-name">${esc(short(it.desc))}</span>
-    <span class="lb-cov"><span class="lb-d">${big}</span>${falta ? `<span class="lb-falta">falta ${fmt(-it.disp)} cx</span>` : it.repos ? `<span class="lb-rep">repor ${fmt(it.repos)} cx</span>` : ''}</span>
+    <span class="lb-cov"><span class="lb-d">${big}</span>${falta ? `<span class="lb-falta">${fmt(-it.disp)} cx</span>` : it.repos ? `<span class="lb-rep">repor ${fmt(it.repos)} cx</span>` : ''}</span>
     ${boxes(it)}
     <span class="lb-n"><span><small>Estoque</small><b>${fmt(it.est)}</b></span><span><small>Empenhado</small><b>${fmt(it.emp)}</b></span><span><small>Disponível</small><b class="${falta ? 'neg' : ''}">${fmt(it.disp)}</b></span></span>
     <span class="lb-os">${it.os ? `<span><b>O.S. ${esc(it.os)}</b> ${it.mov ? esc(it.mov) : 'etapa não informada'}</span><span class="pz ${pcls}">${prz}</span>` : `<span class="${it.st === 'Crítico' ? 'nos' : ''}">${it.st === 'Crítico' ? 'Sem O.S. · abrir ordem' : 'Sem O.S.'}</span>`}</span>
@@ -2420,9 +2444,10 @@ function prodBrowser(el, rows, pre, subEl){
   const sum_ = (k, a) => ({k, a, cr:count(a, i => i.st === 'Crítico'), wa:count(a, i => i.st === 'Atenção'), ok:count(a, i => i.st === 'Seguro'), sc:count(a, i => i.st === 'Sem consumo' || i.st === 'Sem dados'), so:count(a, i => i.st === 'Crítico' && !i.os), fa:count(a, i => i.disp < 0)});
   const g = groupBy(rows, i => i.fr).map(([k, a]) => sum_(k, a)).sort((x, y) => y.cr - x.cr || y.wa - x.wa || x.k.localeCompare(y.k, 'pt-BR'));
   const all = sum_('', rows);
-  if (SELFR[pre] === undefined || (SELFR[pre] && !g.some(x => x.k === SELFR[pre]))) SELFR[pre] = g[0].k;
-  const sel = SELFR[pre] === '' ? all : g.find(x => x.k === SELFR[pre]);
+  // a aba aberta é a mesma franquia do seletor do topo
+  const sel = !F.fr ? all : (g.find(x => x.k === F.fr) || sum_(F.fr, []));
   const sk = SORTP[pre] || 'acaba';
+  if (F.fr && !g.some(x => x.k === F.fr)) g.push(sel);
   const tabs = [all, ...g].map(x => `<button type="button" role="tab" class="ft ${x === sel ? 'on' : ''}" data-k="${esc(x.k)}" aria-selected="${x === sel}">${esc(x.k || 'Todas')}${x.cr ? `<span class="n">${fmt(x.cr)}</span>` : ''}</button>`).join('');
   const list = sel.a.slice().sort(PSORT[sk][1]);
   const chip = (n, l, c) => n ? `<span class="kc-${c}"><b>${fmt(n)}</b> ${l}</span>` : '';
@@ -2434,12 +2459,12 @@ function prodBrowser(el, rows, pre, subEl){
           <p class="bd-c"><span><b>${fmt(sel.a.length)}</b> ${sel.a.length === 1 ? 'produto' : 'produtos'}</span>${chip(sel.cr, sel.cr === 1 ? 'crítico' : 'críticos', 'crit')}${chip(sel.wa, 'em atenção', 'warn')}${chip(sel.fa, 'já em falta', 'crit')}${chip(sel.so, 'críticos sem O.S.', 'ink')}</p></div>
         <label class="bd-sort">Ordenar<select data-sort>${Object.entries(PSORT).map(([k, [l]]) => `<option value="${k}" ${k === sk ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
       </header>
-      <div class="bd-grid">${list.map(pcard).join('')}</div>
+      <div class="bd-grid">${list.length ? list.map(pcard).join('') : `<div class="bd-empty"><b>Nenhum produto desta franquia neste filtro</b>Troque a situação ou use Limpar filtros no topo.</div>`}</div>
     </div></div>`;
   if (subEl) subEl.textContent = `${plural(g.length, 'franquia', 'franquias')} · ${plural(rows.length, 'produto', 'produtos')} · a etiqueta mostra cada caixinha como 10 dias de estoque`;
   const swap = () => { const m = el.querySelector('.board'); m.classList.remove('swap'); void m.offsetWidth; m.classList.add('swap'); };
   const onTab = el.querySelector('.ft.on'); if (onTab) onTab.scrollIntoView({block:'nearest', inline:'nearest'});
-  el.querySelectorAll('.ft').forEach(b => b.onclick = () => { SELFR[pre] = b.dataset.k; render(); swap(); const n = el.querySelector(`.ft[data-k="${CSS.escape(b.dataset.k)}"]`); if (n){ n.focus({preventScroll:true}); n.scrollIntoView({block:'nearest', inline:'center', behavior: RM.matches ? 'auto' : 'smooth'}); } });
+  el.querySelectorAll('.ft').forEach(b => b.onclick = () => { F.fr = b.dataset.k; render(); swap(); const n = el.querySelector(`.ft[data-k="${CSS.escape(b.dataset.k)}"]`); if (n){ n.focus({preventScroll:true}); n.scrollIntoView({block:'nearest', inline:'center', behavior: RM.matches ? 'auto' : 'smooth'}); } });
   el.querySelector('[data-sort]').onchange = e => { SORTP[pre] = e.target.value; render(); swap(); };
   el.querySelectorAll('.lb').forEach(c => c.onclick = () => openItem(c.dataset.cod));
 }
@@ -2586,7 +2611,8 @@ function rEstoque(fl){
   const byFr = EST_VIEW === 'fr';
   document.querySelectorAll('#tab-estoque .vsw button').forEach(b => { b.setAttribute('aria-pressed', b.dataset.v === EST_VIEW); b.onclick = () => { EST_VIEW = b.dataset.v; render(); }; });
   $('#estBar').hidden = !byFr; $('#estGroups').hidden = !byFr; $('#tEstoque').hidden = byFr;
-  if (byFr) prodBrowser($('#estGroups'), rows, 'est', $('#estSub'));
+  const inS = i => !sel || i.st === sel || (sel === 'Sem consumo' && i.st === 'Sem dados');
+  if (byFr) prodBrowser($('#estGroups'), filtered({ignoreFr:true}).filter(inS), 'est', $('#estSub'));
   else table('tEstoque', rows, ['mat','cov','disp','est','emp','osc','prz'], ['cov','asc']);
 }
 let EST_VIEW = 'fr';
